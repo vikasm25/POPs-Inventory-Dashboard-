@@ -85,3 +85,18 @@ button,.tab,.choice-row{touch-action:manipulation}
 @media(max-width:650px){.dashboard{min-width:0}.filter-strip.inventory-filters{grid-template-columns:1fr;max-width:none}.topbar{align-items:flex-start}.site-nav{width:100%;justify-content:flex-start;gap:12px}.site-nav a{font-size:12px}.map-frame{height:clamp(260px,75vw,390px)}.selection-cards{grid-template-columns:1fr}.selector-card{padding:14px}.choice-list{max-height:200px}.map-legend{padding:8px 2px}.map-zoom{transform:scale(.9);transform-origin:top right}.year-control{flex-wrap:wrap}.year-control input[type=range]{min-width:100px;flex:1}.panel-heading{flex-wrap:wrap;gap:8px}.insights-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.site-nav{gap:7px}.site-nav a{font-size:11px}.map-frame{grid-template-columns:51px minmax(0,1fr)}.map-legend{width:51px}.insights-grid{grid-template-columns:1fr}.selected-location strong{font-size:24px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Touch devices: one-finger page scroll, two-finger map navigation. */
+@media(pointer:coarse){
+ .map-viewport,.map-viewport svg{touch-action:pan-y!important}
+ .map-zoom button,.map-tabs button{min-width:44px;min-height:44px}
+ .year-control input[type=range]{height:38px;touch-action:pan-x}
+ .choice-row{min-height:44px;align-items:center}
+ .choice-row input{width:19px;height:19px}
+ .map-tooltip{pointer-events:none}
+}
+@media(max-width:650px){
+ .map-frame{height:clamp(260px,75vw,390px)}
+ .map-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+ .year-control{padding-top:14px;padding-bottom:14px}
+}
