@@ -45,5 +45,24 @@ for(const [pollutant,meta] of items){
 }
 copyFileSync(join(projectRoot,"data","edgar","manifest.json"),
              join(dist,"data","edgar","manifest.json"));
+// Publish Breivik only when the entire independently validated catalog is present.
+const breivikCatalogPath=join(projectRoot,"data","breivik","default","manifest.json");
+if(existsSync(breivikCatalogPath)){
+ const catalog=JSON.parse(await import("node:fs/promises").then(fs=>fs.readFile(breivikCatalogPath,"utf8")));
+ if(catalog.schema!==1||catalog.inventory!=="Breivik"||catalog.scenario!=="Default"||catalog.units!=="tonnes/year")
+  throw new Error("Invalid Breivik Default catalog");
+ const files=Object.entries(catalog.pollutants||{});
+ if(files.length!==23)throw new Error("Expected 22 Breivik PCB congeners plus Sum22");
+ mkdirSync(join(dist,"data","breivik","default"),{recursive:true});
+ for(const [key,meta] of files){
+  const expected="data/breivik/default/"+key+".json";
+  if(!/^(PCB[0-9]+|Sum22)$/.test(key)||meta.path!==expected)throw new Error("Unexpected Breivik dataset: "+key);
+  const src=join(projectRoot,expected);
+  if(!existsSync(src)||!statSync(src).size)throw new Error("Missing Breivik file: "+expected);
+  copyFileSync(src,join(dist,expected));
+ }
+ copyFileSync(breivikCatalogPath,join(dist,"data","breivik","default","manifest.json"));
+ console.log("Breivik Default published: 22 congeners + Sum22 (1930–2100).");
+}
 console.log("Static Vercel bundle complete: "+items.length+" EDGAR datasets + world map + dashboard.");
 console.log("No Python scripts, caches, licenses from processing ZIPs, or source archives are published.");
