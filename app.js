@@ -71,9 +71,43 @@ function KPIs(){const rows=filter(S.mapInventory,S.year,null,true),v=sum(rows),c
 function rankings(){const c=byCountry().sort((a,b)=>b.value-a.value);let top=c.slice(0,3),low=c.slice().reverse().slice(0,3);for(const [id,items,isLow] of [["rankTop",top,false],["rankLow",low,true]]){const root=$(id);root.replaceChildren();if(!items.length){root.innerHTML='<div class="empty-chart">No country data</div>';continue}const max=Math.max(...items.map(a=>a.value),.00001);items.forEach((v,i)=>{const row=document.createElement("div");row.className="rank-row"+(isLow?" low-rank":"");row.innerHTML='<span class="rank-position">'+(i+1)+'</span><span class="rank-name" title="'+esc(v.name)+'">'+esc(v.name)+'</span><div class="rank-track"><div class="rank-fill" style="width:'+Math.max(v.value?3:0,v.value/max*100)+'%"></div></div><b class="rank-value">'+fmt(v.value)+'</b>';row.onclick=()=>{S.country=v.name;render()};row.style.cursor="pointer";root.append(row)})}}
 function linePlot(){const root=d3.select("#trendPlot");root.selectAll("*").remove();const leg=$("trendLegend");leg.replaceChildren();const sources=[...S.sectors];let series=sources.map((sector,i)=>({name:sector,color:COLORS[SECTORS.indexOf(sector)%COLORS.length],points:grouped(filter(S.mapInventory,S.year,S.country,false,true).filter(r=>r.sector===sector),"year").map(v=>({year:+v.name,value:v.value})).sort((a,b)=>a.year-b.year)})).filter(s=>s.points.length);$("trendScope").textContent=S.country||"GLOBAL";$("trendSubtitle").textContent=(S.mapInventory||"No inventory")+" · "+(S.country||"worldwide")+" · tonnes/year";if(!series.length){root.html('<div class="empty-chart">No emissions history for this selection</div>');return}series.forEach(s=>{let el=document.createElement("span");el.className="legend-key";el.innerHTML='<i style="background:'+s.color+'"></i>'+esc(s.name);leg.append(el)});const w=670,h=245,m={top:16,right:18,bottom:34,left:59},ys=series.flatMap(s=>s.points),ext=d3.extent(ys,d=>d.year),x=d3.scaleLinear().domain(ext[0]===ext[1]?[ext[0]-1,ext[1]+1]:ext).range([m.left,w-m.right]),y=d3.scaleLinear().domain([0,d3.max(ys,d=>d.value)||1]).nice().range([h-m.bottom,m.top]),svg=root.append("svg").attr("viewBox","0 0 "+w+" "+h).attr("preserveAspectRatio","xMidYMid meet");svg.selectAll(".grid").data(y.ticks(5)).join("line").attr("x1",m.left).attr("x2",w-m.right).attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke","var(--line)").attr("opacity",.6);svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.bottom)+")").call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")));svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.left+",0)").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")));series.forEach(s=>{svg.append("path").datum(s.points).attr("fill","none").attr("stroke",s.color).attr("stroke-width",2.4).attr("d",d3.line().x(d=>x(d.year)).y(d=>y(d.value)));svg.selectAll("circle.c"+norm(s.name)).data(s.points).join("circle").attr("cx",d=>x(d.year)).attr("cy",d=>y(d.value)).attr("r",2.3).attr("fill",s.color).append("title").text(d=>s.name+" · "+d.year+" · "+fmt(d.value)+" t/year")});svg.append("line").attr("x1",x(S.year)).attr("x2",x(S.year)).attr("y1",m.top).attr("y2",h-m.bottom).attr("stroke","var(--muted)").attr("stroke-dasharray","4 4").attr("opacity",.8)}
 function donut(){const root=d3.select("#sectorDonut");root.selectAll("*").remove();const list=$("sectorLegend");list.replaceChildren();const items=grouped(filter(S.mapInventory,S.year,null,true),"sector").sort((a,b)=>b.value-a.value),total=sum(items.map(v=>({emissions:v.value})));if(!total){root.html('<div class="empty-chart">No sector breakdown</div>');return}const w=240,h=220,r=88,g=root.append("svg").attr("viewBox","0 0 "+w+" "+h).append("g").attr("transform","translate(120,110)"),pie=d3.pie().sort(null).value(d=>d.value);g.selectAll("path").data(pie(items)).join("path").attr("d",d3.arc().innerRadius(58).outerRadius(r)).attr("fill",d=>COLORS[SECTORS.indexOf(d.data.name)%COLORS.length]).attr("stroke","var(--panel)").attr("stroke-width",2).append("title").text(d=>d.data.name+": "+fmt(d.data.value)+" t/year");g.append("text").attr("text-anchor","middle").attr("y",0).attr("fill","var(--text)").attr("font-size",23).attr("font-weight",700).text(fmt(total));g.append("text").attr("text-anchor","middle").attr("y",18).attr("fill","var(--muted)").attr("font-size",10).text("tonnes/year");items.forEach(v=>{const color=COLORS[SECTORS.indexOf(v.name)%COLORS.length],div=document.createElement("div");div.className="donut-item";div.innerHTML='<span><i style="background:'+color+'"></i>'+esc(v.name)+'</span><b>'+fmt(v.value/total*100)+'%<span class="donut-sub">'+fmt(v.value)+' t/yr</span></b>';list.append(div)})}
-function region(){const root=d3.select("#regionalChart");root.selectAll("*").remove();const entries=grouped(filter(S.mapInventory,S.year,null,true).map(r=>({...r,region:S.regionLookup[r.iso]||r.region||"Unclassified"})),"region").sort((a,b)=>b.value-a.value);if(!entries.length){root.html('<div class="empty-chart">No regional records available</div>');return}const w=610,h=235,m={t:22,r:12,b:51,l:55},x=d3.scaleBand().domain(entries.map(d=>d.name)).range([m.l,w-m.r]).padding(.33),y=d3.scaleLinear().domain([0,d3.max(entries,d=>d.value)||1]).nice().range([h-m.b,m.t]),svg=root.append("svg").attr("viewBox","0 0 610 235");svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.l+",0)").call(d3.axisLeft(y).ticks(4).tickFormat(d3.format("~s")));svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.b)+")").call(d3.axisBottom(x).tickSize(0)).selectAll("text").style("font-size","9px");svg.selectAll("rect.bar").data(entries).join("rect").attr("x",d=>x(d.name)).attr("y",d=>y(d.value)).attr("width",x.bandwidth()).attr("height",d=>y(0)-y(d.value)).attr("rx",3).attr("fill",(d,i)=>COLORS[i%COLORS.length]).append("title").text(d=>d.name+" "+fmt(d.value)+" t/year");svg.selectAll("text.value").data(entries).join("text").attr("x",d=>x(d.name)+x.bandwidth()/2).attr("y",d=>y(d.value)-5).attr("text-anchor","middle").attr("font-size",10).attr("fill","var(--text)").text(d=>fmt(d.value))}
+function region(){
+ const root=d3.select("#regionalChart");root.selectAll("*").remove();
+ const rows=filter(S.mapInventory,S.year,null,true);
+ const missing=new Set();
+ const mapped=rows.flatMap(r=>{
+  const group=S.regionLookup[r.iso]||(REGIONS.includes(r.region)?r.region:null);
+  if(!group||!REGIONS.includes(group)){missing.add(r.iso||r.country);return []}
+  return [{...r,region:group}];
+ });
+ const entries=grouped(mapped,"region").sort((a,b)=>b.value-a.value);
+ if(!entries.length){root.html('<div class="empty-chart">No continent-level records available</div>');return}
+ const w=660,h=280,m={t:26,r:15,b:58,l:65};
+ const x=d3.scaleBand().domain(entries.map(d=>d.name)).range([m.l,w-m.r]).padding(.28);
+ const y=d3.scaleLinear().domain([0,d3.max(entries,d=>d.value)||1]).nice().range([h-m.b,m.t]);
+ const svg=root.append("svg").attr("viewBox","0 0 "+w+" "+h).attr("preserveAspectRatio","xMidYMid meet");
+ svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.l+",0)").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")));
+ svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.b)+")").call(d3.axisBottom(x).tickSize(0)).selectAll("text").style("font-size","11px");
+ svg.selectAll("rect.bar").data(entries).join("rect").attr("x",d=>x(d.name)).attr("y",d=>y(d.value)).attr("width",x.bandwidth()).attr("height",d=>Math.max(0,y(0)-y(d.value))).attr("rx",4).attr("fill",(d,i)=>COLORS[i%COLORS.length]).append("title").text(d=>d.name+" · "+fmt(d.value)+" t/year");
+ svg.selectAll("text.value").data(entries).join("text").attr("x",d=>x(d.name)+x.bandwidth()/2).attr("y",d=>y(d.value)-8).attr("text-anchor","middle").attr("font-size",11).attr("fill","var(--text)").text(d=>fmt(d.value));
+ if(missing.size){root.append("p").attr("class","region-note").text(missing.size+" country code(s) omitted from continental breakdown because their region could not be verified.");console.warn("Unmapped region ISO codes:",[...missing])}
+}
 function insights(){const c=byCountry().sort((a,b)=>b.value-a.value),total=c.reduce((v,r)=>v+r.value,0),top3=c.slice(0,3).reduce((v,r)=>v+r.value,0);$("insightTop3").textContent=total?fmt(top3/total*100)+"%":"—";$("insightPositive").textContent=String(c.filter(r=>r.value>0).length);const sec=grouped(filter(S.mapInventory,S.year,null,true),"sector").sort((a,b)=>b.value-a.value);$("insightSector").textContent=sec[0]?.name||"—";$("insightSectorShare").textContent=total&&sec.length?fmt(sec[0].value/total*100)+"% of global emissions":"No observations";const firstYear=yearRange(filter(S.mapInventory,S.year,null,true,true)).min,first=sum(filter(S.mapInventory,firstYear,null,true));$("insightLongChange").textContent=first?(total>=first?"+":"")+fmt((total/first-1)*100)+"%":"—";$("insightPeriod").textContent=firstYear+"–"+S.year+" · against first reported year"}
-function comparison(){const root=$("inventoryCompare");root.replaceChildren();const entries=allInventories().map((inventory,i)=>({inventory,value:sum(filter(inventory,S.year,S.country))})),max=Math.max(...entries.map(r=>r.value),0);if(!entries.length){root.innerHTML='<div class="empty-chart">Select an inventory to compare</div>';return}for(const [i,r] of entries.entries()){const row=document.createElement("div");row.className="compare-row";row.innerHTML='<div class="compare-head"><b>'+esc(r.inventory)+'</b><strong>'+fmt(r.value)+' t/year</strong></div><div class="compare-track"><div class="compare-fill" style="width:'+(max?100*r.value/max:0)+'%;background:'+COLORS[i%COLORS.length]+'"></div></div>';root.append(row)}}
+function topPolluters(){
+ const root=$("topPolluters");root.replaceChildren();
+ const countries=byCountry().filter(r=>r.value>0).sort((a,b)=>b.value-a.value);
+ const top=countries.slice(0,7),total=countries.reduce((a,r)=>a+r.value,0);
+ if(!top.length){root.innerHTML='<div class="empty-chart">No positive country emissions for this selection</div>';return}
+ top.forEach((r,i)=>{
+  const share=total?100*r.value/total:0;
+  const button=document.createElement("button");button.type="button";button.className="top-country-row";
+  button.title="View "+r.name+" on the dashboard";
+  button.innerHTML='<span class="top-country-rank">'+(i+1)+'</span><span class="top-country-main"><span class="top-country-head"><b>'+esc(r.name)+'</b><span>'+fmt(r.value)+' t/yr · '+fmt(share)+'%</span></span><span class="top-country-track"><span ></span></span></span>';
+  const fill=button.querySelector(".top-country-track span");fill.style.width=(top[0].value?100*r.value/top[0].value:0)+"%";
+  button.onclick=()=>{S.country=r.iso||r.name;render()};
+  root.append(button);
+ });
+}
 const INDIA_BOUNDS={west:67,east:98,north:38,south:6},projection=d3.geoEquirectangular().scale(148).translate([500,232]),geoPath=d3.geoPath(projection);
 function protectedRegion(f){const b=d3.geoBounds(f);return b[0][0]<INDIA_BOUNDS.east&&b[1][0]>INDIA_BOUNDS.west&&b[0][1]<INDIA_BOUNDS.north&&b[1][1]>INDIA_BOUNDS.south}
 const MAP_COLORS=["#275d9a","#36bfd0","#6ed393","#f4dd57","#f68e45","#c63856"];
@@ -84,45 +118,55 @@ function mapScale(){
  const vals=[...totals.values()].filter(v=>v>0).sort((a,b)=>a-b),upper=vals.length?vals[Math.floor((vals.length-1)*.98)]:1,lower=vals.length?Math.max(vals[0],upper/10000):1e-6;
  S.scaleCache={key,upper,lower,scale:d3.scaleSequentialLog(d3.interpolateRgbBasis(MAP_COLORS)).domain([lower,Math.max(lower*1.001,upper)]).clamp(true)};return S.scaleCache;
 }
+function countryValue(feature){
+ const iso=String(feature.id||feature.properties?.ISO_A3||"").toUpperCase();
+ return S.mapValuesISO?.get(iso)??S.mapValuesName?.get(canon(feature.properties?.name));
+}
 function updateMapYear(){
  if(!S.world||!S.mapZoomBehavior)return;
- const byISO=new Map(),byName=new Map();
- for(const c of byCountry()){if(c.iso)byISO.set(c.iso,c.value);byName.set(canon(c.name),c.value)}
+ const rows=byCountry();
+ S.mapValuesISO=new Map();S.mapValuesName=new Map();
+ for(const c of rows){if(c.iso)S.mapValuesISO.set(c.iso,c.value);S.mapValuesName.set(canon(c.name),c.value)}
  const {lower,upper,scale}=mapScale();
  $("legendMax").textContent=fmt(upper);$("legendMid").textContent=fmt(Math.sqrt(lower*upper));$("legendMin").textContent=fmt(lower);
  $("mapSubtitle").textContent=(S.activePollutant||"No pollutant")+" · "+(S.mapInventory||"No inventory")+" · t/year";
- d3.select("#worldMap").selectAll("path.map-country").attr("fill",f=>{const v=byISO.get(String(f.id||f.properties?.ISO_A3||"").toUpperCase())??byName.get(canon(f.properties?.name));return v===undefined?"#344b60":v===0?"#eef1f3":scale(Math.max(v,lower))});
- $("mapCount").textContent=byISO.size+" countries with observations";
+ d3.select("#worldMap").selectAll("path.map-country").attr("fill",f=>{
+  const v=countryValue(f);return v===undefined?"#344b60":v===0?"#eef1f3":scale(Math.max(v,lower));
+ });
+ $("mapCount").textContent=rows.length+" countries with observations";
 }
-function updateLocationSummary(){const rows=byCountry(),selected=S.country?rows.find(r=>canon(r.name)===canon(S.country)||r.iso===S.country):null;$("countryName").textContent=S.country||"Global";$("countryEmission").textContent=selected?fmt(selected.value):S.country?"No observation":fmt(rows.reduce((v,r)=>v+r.value,0));$("countryDetail").textContent=S.mapInventory+" · "+S.year+" · tonnes/year";$("closeCountry").hidden=!S.country}
+function updateLocationSummary(){const rows=byCountry(),selected=S.country?rows.find(r=>canon(r.name)===canon(S.country)||r.iso===S.country):null;$("countryName").textContent=selected?.name||S.country||"Global";$("countryEmission").textContent=selected?fmt(selected.value):S.country?"No observation":fmt(rows.reduce((v,r)=>v+r.value,0));$("countryDetail").textContent=S.mapInventory+" · "+S.year+" · tonnes/year";$("closeCountry").hidden=!S.country}
 function drawMap(){
  const svg=d3.select("#worldMap");svg.selectAll("*").remove();
  svg.append("rect").attr("class","ocean").attr("width",1000).attr("height",465);
- svg.append("path").datum(d3.geoGraticule10()).attr("d",geoPath).attr("class","graticule");if(!S.world)return;
- const {upper,lower,scale}=mapScale();
- $("legendMax").textContent=fmt(upper);$("legendMid").textContent=fmt(Math.sqrt(lower*upper));$("legendMin").textContent=fmt(lower);
- $("legendScale").style.background="linear-gradient(to top,"+MAP_COLORS.join(",")+")";
- $("legendScale").title="Logarithmic scale fixed across years; values above 98th percentile share the highest shade";
- const rows=byCountry(),byISO=new Map(),byName=new Map();
- for(const r of rows){if(r.iso)byISO.set(r.iso,r.value);byName.set(canon(r.name),r.value)}
- const value=f=>byISO.get(String(f.id||f.properties?.ISO_A3||"").toUpperCase())??byName.get(canon(f.properties?.name));
+ if(!S.world)return;
  const countries=svg.append("g").attr("class","map-contents");
- countries.selectAll("path.map-country").data(S.world.features).join("path").attr("class","map-country").attr("d",geoPath)
- .attr("fill",f=>{const v=value(f);return v===undefined?"#344b60":v===0?"#eef1f3":scale(Math.max(v,lower))})
- .on("click",(e,f)=>{if(e.defaultPrevented)return;S.country=f.properties?.name||null;render()})
- .on("mousemove",(e,f)=>{const v=value(f),tip=$("mapTooltip"),box=$("worldMap").getBoundingClientRect();tip.style.display="block";tip.style.left=Math.min(box.width-180,Math.max(0,e.offsetX+12))+"px";tip.style.top=Math.max(0,e.offsetY-32)+"px";tip.textContent=(f.properties?.name||"Country")+" · "+(v===undefined?"No observation":fmt(v)+" t/year")})
- .on("mouseleave",()=>{$("mapTooltip").style.display="none"});
+ countries.selectAll("path.map-country").data(S.world.features).join("path")
+  .attr("class","map-country").attr("d",geoPath)
+  .on("click",(e,f)=>{if(e.defaultPrevented)return;S.country=f.id||f.properties?.name||null;render()})
+  .on("mousemove",(e,f)=>{
+   const v=countryValue(f),tip=$("mapTooltip"),box=$("mapFrame").getBoundingClientRect();
+   tip.style.display="block";
+   tip.style.left=Math.min(box.width-190,Math.max(4,e.clientX-box.left+12))+"px";
+   tip.style.top=Math.max(4,e.clientY-box.top-35)+"px";
+   tip.textContent=(f.properties?.name||"Country")+" · "+(v===undefined?"No observation":fmt(v)+" t/year");
+  })
+  .on("mouseleave",()=>{$("mapTooltip").style.display="none"});
+ const oceanLabels=[
+  ["PACIFIC OCEAN",126,208],["ATLANTIC OCEAN",415,270],["INDIAN OCEAN",700,285],
+  ["ARCTIC OCEAN",510,52],["SOUTHERN OCEAN",500,424]
+ ];
+ countries.append("g").attr("class","ocean-labels").selectAll("text").data(oceanLabels).join("text")
+  .attr("x",d=>d[1]).attr("y",d=>d[2]).attr("text-anchor","middle").text(d=>d[0]);
  if(!S.mapZoomBehavior)S.mapZoomBehavior=d3.zoom().filter(e=>e.type==="wheel"?!e.ctrlKey:e.type==="touchstart"?e.touches.length>1:!e.button).scaleExtent([1,8]).translateExtent([[0,0],[1000,465]]).extent([[0,0],[1000,465]]).on("zoom",e=>{S.mapTransform=e.transform;svg.select(".map-contents").attr("transform",e.transform)});
  svg.call(S.mapZoomBehavior).on("dblclick.zoom",null);svg.call(S.mapZoomBehavior.transform,S.mapTransform||d3.zoomIdentity);
- const selected=S.country?rows.find(r=>canon(r.name)===canon(S.country)||r.iso===S.country):null;
- const globalTotal=rows.reduce((total,r)=>total+r.value,0);
- $("countryName").textContent=S.country||"Global";$("countryEmission").textContent=selected?fmt(selected.value):S.country?"No observation":fmt(globalTotal);
- $("countryDetail").textContent=S.mapInventory+" · "+S.year+" · tonnes/year";
- $("closeCountry").hidden=!S.country;
- $("mapCount").textContent=rows.length+" countries with observations";$("mapSubtitle").textContent=($("pollutantSelect").value||"No pollutant")+" · "+(S.mapInventory||"No inventory")+" · t/year";
+ $("legendScale").style.background="linear-gradient(to top,"+MAP_COLORS.join(",")+")";
+ $("legendScale").title="Logarithmic scale fixed across years; upper bound at the 98th percentile of positive country-year totals";
+ updateMapYear();
+ updateLocationSummary();
 }
 function dataTable(){const rows=byCountry().sort((a,b)=>b.value-a.value),root=$("tableBody");root.replaceChildren();rows.forEach(r=>{const tr=document.createElement("tr");tr.innerHTML="<td>"+esc(r.name)+"</td><td>"+esc(r.iso||r.rows[0]?.iso||"—")+"</td><td>"+fmt(r.value)+"</td>";tr.style.cursor="pointer";tr.onclick=()=>{S.country=r.name;render()};root.append(tr)})}
-function render(){notice();$("yearNumber").textContent=S.year;$("mapYearBadge").textContent=S.year;KPIs();linePlot();donut();region();comparison();insights();dataTable();if(S.world&&d3.select("#worldMap").select(".map-contents").size())updateMapYear();else drawMap();updateLocationSummary()}
+function render(){notice();$("yearNumber").textContent=S.year;$("mapYearBadge").textContent=S.year;KPIs();linePlot();donut();region();topPolluters();insights();dataTable();if(S.world&&d3.select("#worldMap").select(".map-contents").size())updateMapYear();else drawMap();updateLocationSummary()}
 function parseRecord(o,i){const get=(...aliases)=>{const k=Object.keys(o).find(k=>aliases.some(a=>norm(a)===norm(k)));return k==null?"":String(o[k]??"").trim()};const country=get("country","country_name"),iso=get("iso3","iso_a3","country_code").toUpperCase(),year=Number(get("year")),pollutant=get("pollutant","substance","chemical"),inventory=get("inventory","dataset"),sector=get("emission_source","source_category","sector","source"),region=get("region","continent")||"Unclassified",raw=get("emissions_tonnes_per_year","emissions","value"),unit=norm(get("unit","units")||"tonnes_per_year"),factor={tonnesperyear:1,tonnesyear:1,tyear:1,tyr:1,kgperyear:.001,kgyear:.001,kgyr:.001,gperyear:1e-6,gyear:1e-6,gyr:1e-6}[unit];if(!country&&!iso)throw Error("Row "+i+": country or ISO3 is required");if(!Number.isInteger(year)||year<1800||year>2200)throw Error("Row "+i+": invalid year");if(!pollutant||!inventory||!sector)throw Error("Row "+i+": pollutant, inventory and emission source are required");if(raw===""||!Number.isFinite(+raw)||+raw<0)throw Error("Row "+i+": invalid emissions");if(factor===undefined)throw Error("Row "+i+": unsupported unit "+unit);return{country:country||iso,iso,year,pollutant,inventory,sector,region,emissions:+raw*factor}}
 async function importFiles(files){try{let incoming=[];for(const f of files){const rows=d3.csvParse(await f.text());if(!rows.length)throw Error(f.name+": empty CSV");incoming.push(...rows.map((r,i)=>parseRecord(r,i+2)))}let m=new Map(S.records.map(r=>[recordKey(r),r]));for(const r of incoming)m.set(recordKey(r),r);S.records=[...m.values()];S.demo=false;S.country=null;S.year=yearRange(S.records).max;S.inventories=new Set(S.records.map(r=>r.inventory));S.sectors=new Set(S.records.map(r=>r.sector));S.mapInventory=[...S.inventories][0]||"";options();render();$("uploadMessage").textContent=incoming.length+" records imported, "+S.records.length+" unique observations retained"}catch(e){$("uploadMessage").textContent="Import error: "+e.message}}
 function recordKey(r){return[r.iso||canon(r.country),r.year,r.pollutant,r.inventory,r.sector].join("|")}
@@ -249,6 +293,6 @@ async function loadLocalIndiaBoundary() {
 }
 loadLocalIndiaBoundary();
 
-fetch("./data/country-regions.json").then(r=>r.ok?r.json():Promise.reject(Error("Regional lookup missing"))).then(x=>{S.regionLookup=x.regions||{};for(const r of S.records)if(!r.region||r.region==="Unclassified")r.region=S.regionLookup[r.iso]||"Unclassified";region()}).catch(e=>console.warn("Region lookup",e));
+fetch("./data/country-regions.json").then(r=>r.ok?r.json():Promise.reject(Error("Regional lookup missing"))).then(x=>{S.regionLookup=x.regions||{};for(const r of S.records)if(!r.region||r.region==="Unclassified")r.region=S.regionLookup[r.iso]||r.region;region()}).catch(e=>console.warn("Region lookup",e));
 loadPublishedEDGAR();
 })();
