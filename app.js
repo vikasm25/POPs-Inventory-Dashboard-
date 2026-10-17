@@ -41,4 +41,46 @@ function setup(){canvas();options();$("themeToggle").onclick=()=>{S.theme=S.them
 for(const kind of ["inventory","sector"]){$(kind+"Trigger").onclick=()=>{const menu=$(kind+"Menu"),open=menu.hidden;document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);menu.hidden=!open;$(kind+"Trigger").setAttribute("aria-expanded",String(open))}}document.addEventListener("click",e=>{if(!e.target.closest(".multi")){document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);for(const kind of ["inventory","sector"])$(kind+"Trigger").setAttribute("aria-expanded","false")}});document.querySelectorAll(".menu-foot button").forEach(btn=>btn.onclick=()=>{const k=btn.dataset.kind,arr=[...new Set(data().map(r=>r[k==="inventory"?"inventory":"sector"]))],set=btn.dataset.action==="all"?new Set(arr):new Set();if(k==="inventory")S.inventories=set;else S.sectors=set;multiOptions(k,arr,set);mapOptions(allInventories());refreshSelectSummaries();render()});render();
 fetch("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(g=>{if(g.type!=="FeatureCollection")throw Error("Unexpected GeoJSON");S.world=g;render()}).catch(e=>{$("mapCount").textContent="Basemap unavailable · "+e.message;d3.select("#worldMap").append("text").attr("x",500).attr("y",200).attr("fill","#c1d8e7").attr("text-anchor","middle").text("Map unavailable; internet required")})}
 if(!window.d3){document.body.insertAdjacentHTML("afterbegin",'<div style="padding:20px;background:#612;color:#fff">Could not load D3. Please check network access.</div>');return}setup();
+
+/* Official, preprocessed EDGAR dataset adapter. Does not relabel aggregate PCB. */
+async function loadPublishedEDGAR() {
+  try {
+    const response = await fetch("./data/edgar/manifest.json", {cache:"no-cache"});
+    if (!response.ok) return;
+    const manifest = await response.json();
+    if (manifest.schema !== 1 || manifest.inventory !== "EDGAR") throw Error("Invalid EDGAR manifest");
+    const all = [];
+    for (const [pollutant, info] of Object.entries(manifest.pollutants || {})) {
+      if (!info.path || !/^data\/edgar\/[A-Za-z0-9_]+\.json$/.test(info.path)) continue;
+      const r = await fetch("./" + info.path + "?v=" + info.archive_sha256.slice(0,12));
+      if (!r.ok) throw Error("Unable to fetch "+info.path);
+      const payload = await r.json();
+      if (payload.schema !== 1 || payload.pollutant !== pollutant) throw Error("Mismatched dataset "+pollutant);
+      for (const a of payload.records) {
+        if (!Array.isArray(a) || a.length !== 5) throw Error("Invalid record shape");
+        const [country, iso, year, sector, emissions] = a;
+        if (!Number.isFinite(emissions) || emissions < 0) throw Error("Invalid emissions");
+        all.push({country,iso,year,pollutant:pollutant==="PCB"?"PCB (aggregate, unintentional)":pollutant,inventory:"EDGAR",sector,region:"Unclassified",emissions});
+      }
+    }
+    if (!all.length) return;
+    // Keep user imported other inventories, update EDGAR keys from authenticated build artifacts.
+    const existing=S.records.filter(r=>r.inventory!=="EDGAR");
+    S.records=[...existing,...all];
+    S.demo=false;
+    S.country=null;
+    S.inventories=new Set(["EDGAR",...existing.map(r=>r.inventory)]);
+    S.sectors=new Set(S.records.map(r=>r.sector));
+    S.mapInventory="EDGAR";
+    S.year=Math.max(...all.map(r=>r.year));
+    options();
+    render();
+    $("uploadMessage").textContent="Loaded preprocessed EDGAR v8.1 data ("+all.length.toLocaleString()+" records).";
+  } catch(e) {
+    console.warn("EDGAR auto-load failed; retaining current dashboard mode:",e);
+    $("uploadMessage").textContent="EDGAR sync data unavailable: "+e.message;
+  }
+}
+
+loadPublishedEDGAR();
 })();
