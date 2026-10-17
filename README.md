@@ -1,62 +1,93 @@
-# POPs Atlas — Persistent Organic Pollutants Inventory Dashboard
+# POPs Atlas · Global Emissions Dashboard
 
-Modern, responsive **static web app** for mapping annual country-level POP emissions, examining country histories, and comparing published inventories without combining them.
+Single-page responsive dashboard for exploring **persistent organic pollutant (POP) emissions** across countries, years, inventories and emission sectors.
 
-## Run locally
-
-Open \`index.html\` using a local web server, e.g.:
-
-\`\`\`bash
-python -m http.server 8000
-\`\`\`
-
-Then visit http://localhost:8000. No build system, API keys or backend required. D3 and country boundaries are fetched over HTTPS, so internet access is needed for the map.
-
-## Input emissions
-
-Click **Import inventory**. Import one or more CSV files with fields:
-
-| country | iso3 | year | pollutant | source | emissions_tonnes_per_year | unit |
-|---|---|---:|---|---|---:|---|
-| India | IND | 2002 | PCB-28 | EDGAR | (your verified value) | tonnes/year |
-
-**Never use the example above as data.** The template under \`data/\` contains only column headers. Emission values must be nonnegative numeric annual mass totals, not concentrations or grid-cell fluxes. Supported input units: \`tonnes/year\` (default), \`kg/year\`, \`g/year\`; all are converted to tonnes/year. Header aliases include \`country_name\`, \`country_code\`, \`iso_a3\`, \`congener\`, \`inventory\`, \`emissions\` and \`value\`. Missing year/pollutant/source or unsupported units are rejected. Observations with the same country, year, pollutant and source are replaced by later imports to avoid silent doubling.
-
-Each inventory must be pre-aggregated to **country per year per pollutant**. The dashboard does not download or estimate emissions automatically. Importing country-wise tables is supported; gridded NetCDF and GIS raster data require offline processing to country totals using an appropriate country mask and mass-conserving area integration. Do not add EDGAR + Breivik; they are independent estimates.
-
-**Important:** For valid comparisons, confirm the same chemical definition (e.g. PCB-28 vs total PCB), time period, geographic coverage, and mass units for each source. A low global total may just mean incomplete country coverage. Currently these are reported totals of loaded observations, not an assurance of complete global coverage. No data are fabricated.
-
-## Map and India's international boundary
-
-**Authoritative source:** [Survey of India — Outline Maps of India](https://surveyofindia.gov.in/pages/outline-maps-of-india), including its official outline map vector download where available.
-
-The generic world basemap is not authoritative for India. The dashboard therefore deliberately **masks a broad bounding rectangle (67°E–98°E, 6°N–38°N)** and suppresses clicks on intersecting generic country shapes. This temporarily masks parts of neighboring countries too. The masked rectangle is **not** an international boundary. This is intentional; inaccurate third-party boundaries must not appear as the official map.
-
-To enable India's outline: legally download the **official Survey of India vector outline**, convert it to GeoJSON with QGIS / GDAL if needed, inspect it, and upload it using **Load Survey of India GeoJSON**. Only polygon and multipolygon features inside the expected geographic window are accepted. The browser performs only basic geographic validation, **not authenticity verification**. Clearly record the official download date/version and license. Neighboring territories in the mask are not restored by this upload; a production-grade map needs an authoritative harmonized regional country boundary dataset and topology QA.
-
-The developer has **not** bundled an unverified or license-restricted India GeoJSON. This is safer than falsely claiming official boundaries.
-
-## Inventory provenance / references
-
-- [EDGAR — Emissions Database for Global Atmospheric Research (European Commission JRC)](https://edgar.jrc.ec.europa.eu/) — check the precise POPs species, release, units, countries, and inventory coverage before importing.
-- Breivik et al. PCB historical emissions work: identify the specific publication/dataset, congener and scenario before downloading or importing.
-- Other national inventories (e.g. EMEP/CEIP, national government reporting) can be normalized to the CSV schema after license and scope verification.
-
-The source labels in the interface are **not an assertion** that published data have been loaded. Initial UI has **zero** emissions and does not use synthetic placeholder numbers.
+**Status:** A complete interactive frontend design implementation, with a **clearly labeled illustrative demonstration dataset**, and browser-based CSV imports. No published EDGAR or Breivik figures are included in the repository. The demo numbers must never be used in analysis or publications.
 
 ## Features
+- Dark/light mode, saved in browser local storage
+- Responsive desktop, tablet and mobile layouts
+- Pollutant selector
+- **Inventory multi-select:** EDGAR, Breivik, other uploaded inventories
+- **Emission source multi-select:** eight official EDGAR-style sector categories
+- One **Map inventory** at a time; comparison panel shows other selected inventories separately. Independent estimates are never summed.
+- Interactive country choropleth, tooltip, zoom, click for country details, map/table toggle
+- Full-width year slider **directly below the map**, with playback
+- Three highest and three lowest reporting countries
+- Sector-specific emissions trends, global KPIs, sector donut, regional chart, inventory comparisons
+- Browser-only CSV import with units validation, duplicate replacement and filtered CSV export
+- Survey of India boundary upload and conservative India-region masking
 
-- Global interactive choropleth with country click, hover, search and reset
-- Year slider and year animation (only imported inventory coverage)
-- Pollutant and emissions source controls
-- Country totals, share, rank and historic sparkline
-- Annual trends and same-year, same-chemical inventory comparison
-- Multi-file CSV imports, validation, normalized units, export of current view
-- Responsive dark UI; browser-only (data are cleared on reload)
-- India official-boundary upload with safe default masking
+## Run
 
-## Next production improvements
+From repository root:
 
-Package reviewed global and Indian boundary geometry locally with documented provenance; build source-specific country-code crosswalk; add ingestion for EDGAR/Breivik releases and DOI/license metadata; provide a country-completeness audit and versioned source manifests; implement precomputed tile / simplified map data, automated tests and accessibility QA.
+```bash
+python -m http.server 8000
+```
 
-License of external source datasets and mapping files is **not** implied by this repository.
+Visit http://localhost:8000. The app requires network access to load D3 from jsDelivr and a public world GeoJSON basemap.
+
+No build tools or API keys are required. It also works when hosted as static HTML on Vercel, Netlify or GitHub Pages (subject to repository hosting permissions).
+
+## Demo mode and data integrity
+
+The app **starts in illustrative DEMO mode** so the complete design can be reviewed without emissions datasets. The generated values are fictitious and are not attributed to EDGAR, Breivik or any other published study. A conspicuous banner identifies this state.
+
+Click **Exit demo** to display an empty authentic-data workspace. Importing CSV files automatically disables demo mode. Browser reloads clear imported records (and restore demo); only the light/dark theme is persisted.
+
+### CSV format
+
+Required headers:
+
+```text
+country,iso3,region,year,pollutant,inventory,emission_source,emissions_tonnes_per_year,unit
+```
+
+Example structure (intentionally **no numeric observation**):
+
+```text
+India,IND,Asia,[year],PCB-28,EDGAR,Industrial Combustion,[verified tonnes/year],tonnes/year
+```
+
+- Import values must be nonnegative numeric annual country emissions, *not* concentrations.
+- Accepted units: tonnes/year, kg/year, g/year. Converted internally to tonnes/year.
+- Country or ISO3, year, pollutant, inventory, emission source, and emissions value are mandatory. Region is optional (defaults to Unclassified). For accurate regional charts provide region or a preprocessing crosswalk.
+- Imports must be **sector-specific**. Where source breakdown is not reported, use an explicit category such as `Unspecified`; do not infer sector shares.
+- Subsequent rows with the same country (or ISO3), year, pollutant, inventory and source category replace earlier observations. The app will not add duplicates.
+- Only the selected inventory appears on the map and in KPIs. Inventory comparisons show independent totals; **do not add EDGAR and Breivik together**.
+- Missing countries and years are not automatically set to zero or interpolated. A total across a partial inventory is a **sum of loaded records**, not guaranteed global coverage.
+- Country name and ISO code matching is best-effort. Supply consistent ISO3 codes and country naming.
+
+### Official emission sector taxonomy
+
+The default eight categories are based on [EDGAR POPs v8.1 sector definitions](https://edgar.jrc.ec.europa.eu/dataset_pop81):
+
+1. Power Industry
+2. Industrial Combustion
+3. Buildings
+4. Transport
+5. Agriculture
+6. Fuel Exploitation
+7. Processes
+8. Waste
+
+EDGAR **Agriculture** includes multiple agricultural activities and is not synonymous solely with agricultural burning. Taxonomies can vary by inventory; do not relabel Breivik categories as though they were identical without a documented crosswalk.
+
+### India international boundary
+
+A global country basemap is **not** an official representation of India's international boundary. To avoid displaying an uncertified political border as authoritative, the dashboard masks an approximate rectangle from **67–98°E, 6–38°N**. The mask is a visual safeguard, **not** a boundary; it also suppresses neighboring countries intersecting that region.
+
+To restore India's outline, legally obtain the approved official vector data from [Survey of India](https://surveyofindia.gov.in/pages/outline-maps-of-india), convert to polygon GeoJSON if needed, and load the file in the Coverage/Data Workspace. The app checks basic polygon extent but **cannot verify the file's authenticity**. Confirm licensing and the correct official version before releasing a production map. For production, use an authoritative harmonized regional set so neighboring-country borders are topologically consistent. Do not claim that the third-party global GeoJSON has Survey of India certification.
+
+## Production limitations and roadmap
+- Published emission datasets are not bundled or automatically synced; assemble and license them separately.
+- Basemap and D3 depend on external network/CDN.
+- Direct browser upload handles country-level CSV only. Process gridded EDGAR NetCDF to mass-conserving country totals offline, with boundary/version documentation.
+- Cross-inventory comparisons require matching pollutant, units, period, geography and sector definitions.
+- Protect provenance with checksums, licenses and DOI/release notes when preparing research-grade data.
+- Add automated browser/keyboard test coverage and local assets for offline usage before production deployment.
+
+## References
+- [EDGAR v8.1 POPs inventory / sectors](https://edgar.jrc.ec.europa.eu/dataset_pop81)
+- [Survey of India official map resources](https://surveyofindia.gov.in/pages/outline-maps-of-india)
