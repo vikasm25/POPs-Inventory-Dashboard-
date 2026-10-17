@@ -10,6 +10,7 @@ const required=[
   "app.js",
   "data/boundaries/world_india.geojson",
   "data/edgar/manifest.json",
+  "data/country-regions.json",
 ];
 for(const filename of required){
   if(!existsSync(join(projectRoot,filename)))
@@ -21,6 +22,7 @@ mkdirSync(join(dist,"data","boundaries"),{recursive:true});
 for(const filename of ["index.html","styles.css","app.js"]){
   copyFileSync(join(projectRoot,filename),join(dist,filename));
 }
+copyFileSync(join(projectRoot,"data","country-regions.json"),join(dist,"data","country-regions.json"));
 copyFileSync(join(projectRoot,"data","boundaries","world_india.geojson"),
              join(dist,"data","boundaries","world_india.geojson"));
 const manifest=JSON.parse(await import("node:fs/promises").then(fs=>fs.readFile(join(projectRoot,"data","edgar","manifest.json"),"utf8")));
