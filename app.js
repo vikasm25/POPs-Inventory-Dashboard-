@@ -1,11 +1,14 @@
 /* POPs Atlas | source-specific country inventory explorer */
 (()=>{"use strict";
 const $=id=>document.getElementById(id),norm=s=>String(s??"").toLowerCase().replace(/[^a-z0-9]/g,""),fmt=v=>Number.isFinite(v)?v.toLocaleString("en-US",{maximumFractionDigits:v<1?5:2}):"—",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const SECTORS=["Power Industry","Industrial Combustion","Buildings","Transport","Agriculture","Fuel Exploitation","Processes","Waste"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
+const SECTORS=["Power Industry","Industrial combustion","Buildings","Transport","Agriculture","Fuel exploitation","Processes","Waste"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
+// Use the official EDGAR v8.1 POPs category names across controls and charts.
+const EDGAR_SECTORS=SECTORS;
+function edgarSectorLabel(source){return({"Industrial Combustion":"Industrial combustion","Fuel Exploitation":"Fuel exploitation"})[source]||source;}
 const special={unitedstatesofamerica:"unitedstates",russianfederation:"russia",czechia:"czechrepublic",republicofkorea:"southkorea",vietnam:"vietnam"};const canon=s=>special[norm(s)]||norm(s);
 const DEMO_COUNTRIES=[["China","CHN","Asia",12100],["United States","USA","North America",8500],["India","IND","Asia",4200],["Russia","RUS","Europe",3500],["Japan","JPN","Asia",2210],["Germany","DEU","Europe",1760],["Brazil","BRA","South America",1310],["United Kingdom","GBR","Europe",1050],["France","FRA","Europe",940],["Canada","CAN","North America",870],["Australia","AUS","Oceania",490],["South Africa","ZAF","Africa",710],["Nigeria","NGA","Africa",460],["Argentina","ARG","South America",280],["Chile","CHL","South America",85],["Iceland","ISL","Europe",.12],["Luxembourg","LUX","Europe",.18],["New Zealand","NZL","Oceania",.25]];
 const DEMO_INVENTORIES=["EDGAR","Breivik"];
-const S={published:null,publishedCache:new Map(),loadSerial:0,regionLookup:{},mapTransform:null,mapZoomBehavior:null,scaleCache:null,demo:false,records:[],inventories:new Set(DEMO_INVENTORIES),sectors:new Set(SECTORS),mapInventory:"EDGAR",country:null,world:null,india:null,zoom:1,year:2020,playing:null,hiddenBanner:false,theme:localStorage.getItem("pops-theme")==="light"?"light":"dark"};
+const S={published:null,publishedCache:new Map(),loadSerial:0,activePollutant:"",loadingPollutant:null,sectorLoadError:"",sectorsCleared:false,regionLookup:{},mapTransform:null,mapZoomBehavior:null,scaleCache:null,demo:false,records:[],inventories:new Set(DEMO_INVENTORIES),sectors:new Set(SECTORS),mapInventory:"EDGAR",country:null,world:null,india:null,zoom:1,year:2020,playing:null,hiddenBanner:false,theme:localStorage.getItem("pops-theme")==="light"?"light":"dark"};
 function makeDemo(){const a=[];for(const [country,iso,region,base] of DEMO_COUNTRIES){for(let year=1990;year<=2024;year++){for(let si=0;si<SECTORS.length;si++){for(const [i,inv] of DEMO_INVENTORIES.entries()){const factor=1-(year-1990)*.013,shares=[.31,.24,.09,.15,.09,.04,.05,.03];a.push({country,iso,region,year,pollutant:"PCB (illustrative)",inventory:inv,sector:SECTORS[si],emissions:base*Math.max(.1,factor)*shares[si]*(i?0.91:1)*(1+.04*Math.sin(year*.35+si))})}}}}return a}
 function data(){return S.demo?makeDemoCached:S.records}const makeDemoCached=makeDemo();
 function yearRange(rows){let lo=Infinity,hi=-Infinity;for(const r of rows){if(r.year<lo)lo=r.year;if(r.year>hi)hi=r.year}return{min:Number.isFinite(lo)?lo:2000,max:Number.isFinite(hi)?hi:2024}}
@@ -13,21 +16,39 @@ const publishedLabel=code=>code==="PCB"?"PCB (aggregate, unintentional)":code;
 const publishedKey=label=>S.published&&Object.keys(S.published.pollutants||{}).find(code=>publishedLabel(code)===label);
 function availableInventories(){return [...new Set([...data().map(r=>r.inventory),...(S.published?["EDGAR"]:[])])].sort()}
 function pollutantsFor(inv){const list=[...new Set(data().filter(r=>r.inventory===inv).map(r=>r.pollutant))];if(inv==="EDGAR"&&S.published)list.push(...Object.keys(S.published.pollutants).map(publishedLabel));return [...new Set(list)].sort()}
-function sourceChoices(){return [...new Set(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===$("pollutantSelect").value).map(r=>r.sector))].sort()}
+function sourceChoices(){
+ if(S.mapInventory==="EDGAR"&&S.published)return [...EDGAR_SECTORS];
+ return [...new Set(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant).map(r=>r.sector))].sort();
+}
 function options(){
  const inv=availableInventories(),allowed=inv.filter(i=>S.inventories.has(i));
  if(!allowed.includes(S.mapInventory))S.mapInventory=allowed[0]||inv[0]||"";
  if(S.mapInventory)S.inventories.add(S.mapInventory);
  const select=$("mapInventory");select.innerHTML=inv.map(i=>'<option value="'+esc(i)+'">'+esc(i)+'</option>').join("");select.value=S.mapInventory;
- const pols=pollutantsFor(S.mapInventory),current=$("pollutantSelect").value;
+ const pols=pollutantsFor(S.mapInventory),current=S.activePollutant||$("pollutantSelect").value;
  select.disabled=!inv.length;
  $("pollutantSelect").innerHTML=pols.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join("");
- if(pols.includes(current))$("pollutantSelect").value=current;
+ S.activePollutant=pols.includes(current)?current:(pols[0]||"");$("pollutantSelect").value=S.activePollutant;
  const choices=$("pollutantOptions");choices.replaceChildren();
- pols.forEach(p=>{const label=document.createElement("label");label.className="choice-row";const input=document.createElement("input");input.type="radio";input.name="selected-pollutant";input.value=p;input.checked=p===$("pollutantSelect").value;input.addEventListener("change",()=>{if(!input.checked)return;stopPlayback(false);$("pollutantSelect").value=p;const key=publishedKey(p);if(key&&!S.demo)loadOnePublishedPollutant(key);else{S.sectors=new Set(sourceChoices());options();render()}});label.append(input,document.createTextNode(p));choices.append(label)});
- const sectors=sourceChoices();S.sectors=new Set([...S.sectors].filter(v=>sectors.includes(v)));if(!S.sectors.size&&!S.sectorsCleared)S.sectors=new Set(sectors);
+ pols.forEach(p=>{const label=document.createElement("label");label.className="choice-row";const input=document.createElement("input");input.type="radio";input.name="selected-pollutant";input.value=p;input.checked=p===S.activePollutant;input.addEventListener("change",()=>{if(!input.checked)return;stopPlayback(false);S.activePollutant=p;$("pollutantSelect").value=p;const key=publishedKey(p);if(key&&!S.demo)loadOnePublishedPollutant(key);else{S.sectors=new Set(sourceChoices());options();render()}});label.append(input,document.createTextNode(p));choices.append(label)});
+ const sectors=sourceChoices();
+ S.sectors=new Set([...S.sectors].filter(v=>sectors.includes(v)));
+ if(!S.sectors.size&&!S.sectorsCleared)S.sectors=new Set(sectors);
+ const available=new Set(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant).map(r=>r.sector));
+ const loading=S.mapInventory==="EDGAR"&&S.loadingPollutant!=null;
+ const status=$("sourceStatus");
+ if(S.sectorLoadError)status.textContent=S.sectorLoadError;
+ else if(loading)status.textContent="Loading EDGAR observations… source categories remain visible.";
+ else if(!sectors.length)status.textContent="No source categories reported for this inventory and pollutant.";
+ else if(!available.size)status.textContent="Select a pollutant to load its source observations.";
+ else status.textContent=available.size+" of "+sectors.length+" source categories have reported observations for this pollutant.";
+ $("sourceRetry").hidden=!(S.sectorLoadError&&S.mapInventory==="EDGAR");
  const root=$("sectorOptions");root.replaceChildren();
- sectors.forEach(sector=>{const label=document.createElement("label");label.className="choice-row";const input=document.createElement("input");input.type="checkbox";input.checked=S.sectors.has(sector);input.addEventListener("change",()=>{S.sectorsCleared=false;input.checked?S.sectors.add(sector):S.sectors.delete(sector);S.scaleCache=null;render()});label.append(input,document.createTextNode(sector));root.append(label)});
+ sectors.forEach(sector=>{const label=document.createElement("label");label.className="choice-row";const input=document.createElement("input");input.type="checkbox";input.checked=S.sectors.has(sector);
+ const missing=S.mapInventory==="EDGAR"&&!loading&&!S.sectorLoadError&&available.size>0&&!available.has(sector);
+ if(missing){label.title="No reported observations for this pollutant";label.classList.add("source-unreported")}
+ input.addEventListener("change",()=>{input.checked?S.sectors.add(sector):S.sectors.delete(sector);S.sectorsCleared=S.sectors.size===0;S.scaleCache=null;render()});
+ label.append(input,document.createTextNode(sector));root.append(label)});
  const bounds=yearRange(data());$("yearSlider").min=bounds.min;$("yearSlider").max=bounds.max;S.year=Math.max(bounds.min,Math.min(bounds.max,S.year));$("yearSlider").value=S.year;$("yearMin").textContent=bounds.min;$("yearMax").textContent=bounds.max;
  const invRoot=$("inventoryOptions");invRoot.replaceChildren();inv.forEach(name=>{const label=document.createElement("label");label.className="option-row";const input=document.createElement("input");input.type="checkbox";input.checked=S.inventories.has(name);input.addEventListener("change",()=>{input.checked?S.inventories.add(name):S.inventories.delete(name);if(!S.inventories.has(S.mapInventory))S.mapInventory=[...S.inventories][0]||"";options();render()});label.append(input,document.createTextNode(name));invRoot.append(label)});
  $("inventorySummary").textContent=S.inventories.size===inv.length?"All inventories":S.inventories.size?Array.from(S.inventories).join(", "):"Select inventory";
@@ -101,8 +122,8 @@ function recordKey(r){return[r.iso||canon(r.country),r.year,r.pollutant,r.invent
 async function importBoundary(file){try{const geo=JSON.parse(await file.text());const features=geo.type==="FeatureCollection"?geo.features:geo.type==="Feature"?[geo]:["Polygon","MultiPolygon"].includes(geo.type)?[{type:"Feature",properties:{name:"India"},geometry:geo}]:[];if(!features.length||features.some(f=>!["Polygon","MultiPolygon"].includes(f.geometry?.type)))throw Error("Polygon/MultiPolygon GeoJSON required");const b=d3.geoBounds({type:"FeatureCollection",features});if(b[0][0]<60||b[1][0]>105||b[0][1]<0||b[1][1]>42)throw Error("Unexpected geometry extent");S.india={type:"FeatureCollection",features};$("boundaryStatus").textContent="Outline loaded; verify official provenance and license";render()}catch(e){$("boundaryStatus").textContent="Boundary rejected: "+e.message}}
 function exportData(){let rows=filter(S.mapInventory,S.year,S.country);if(!rows.length){alert("No observations in selected view");return}const keys=["country","iso3","region","year","pollutant","inventory","emission_source","emissions_tonnes_per_year"],s=[keys.join(","),...rows.map(r=>[r.country,r.iso,r.region,r.year,r.pollutant,r.inventory,r.sector,r.emissions].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(","))].join("\n"),url=URL.createObjectURL(new Blob([s],{type:"text/csv"})),a=document.createElement("a");a.href=url;a.download="pops-emissions-"+S.year+".csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)}
 function stopPlayback(redraw=true){if(S.playing){clearInterval(S.playing);S.playing=null;$("playButton").textContent="▶";if(redraw)render()}}
-function setup(){canvas();options();$("themeToggle").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";localStorage.setItem("pops-theme",S.theme);canvas();render()};$("pollutantSelect").onchange=()=>{stopPlayback(false);const key=publishedKey($("pollutantSelect").value);if(key&&!S.demo){loadOnePublishedPollutant(key)}else{render()}};$("mapInventory").onchange=e=>{stopPlayback(false);S.mapInventory=e.target.value;S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;options();const key=publishedKey($("pollutantSelect").value);if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else render()};$("yearSlider").oninput=e=>{stopPlayback(false);S.year=+e.target.value;render()};$("resetCountry").onclick=$("closeCountry").onclick=()=>{S.country=null;render()};$("zoomIn").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.scaleBy,1.4);$("zoomOut").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.scaleBy,1/1.4);$("zoomReset").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.transform,d3.zoomIdentity);$("mapTab").onclick=()=>{ $("mapFrame").hidden=false;$("tableWrap").hidden=true;$("mapTab").classList.add("active");$("tableTab").classList.remove("active");$("mapTab").setAttribute("aria-pressed","true");$("tableTab").setAttribute("aria-pressed","false")};$("tableTab").onclick=()=>{$("mapFrame").hidden=true;$("tableWrap").hidden=false;$("tableTab").classList.add("active");$("mapTab").classList.remove("active");$("tableTab").setAttribute("aria-pressed","true");$("mapTab").setAttribute("aria-pressed","false")};$("csvUpload").onchange=e=>importFiles(e.target.files);$("boundaryUpload").onchange=e=>importBoundary(e.target.files[0]);$("exportButton").onclick=exportData;$("demoToggle").onclick=()=>{S.demo=!S.demo;if(!S.demo&&!S.records.length){S.inventories.clear();S.sectors.clear();S.mapInventory=""}else{S.inventories=new Set(data().map(r=>r.inventory));S.sectors=new Set(data().map(r=>r.sector));S.mapInventory=[...S.inventories][0]||"";S.year=yearRange(data()).max}S.country=null;options();render()};$("clearImports").onclick=()=>{if(!confirm("Clear imported records?"))return;S.records=[];S.demo=false;S.inventories.clear();S.sectors.clear();S.country=null;S.mapInventory="";options();render();$("uploadMessage").textContent="Imported records cleared"};$("playButton").onclick=()=>{if(S.playing){stopPlayback();return}const max=+$("yearSlider").max;if(S.year>=max)S.year=+$("yearSlider").min;S.playing=setInterval(()=>{S.year++;$("yearSlider").value=S.year;$("yearNumber").textContent=S.year;$("mapYearBadge").textContent=S.year;updateMapYear();if(S.year>=max)stopPlayback()},650);$("playButton").textContent="Ⅱ"};
-for(const kind of ["inventory"]){$(kind+"Trigger").onclick=()=>{const menu=$(kind+"Menu"),open=menu.hidden;document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);menu.hidden=!open;$(kind+"Trigger").setAttribute("aria-expanded",String(open))}}document.addEventListener("click",e=>{if(!e.target.closest(".multi")){document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);for(const kind of ["inventory"])$(kind+"Trigger").setAttribute("aria-expanded","false")}});document.querySelectorAll(".menu-foot button").forEach(btn=>btn.onclick=()=>{const inv=availableInventories();S.inventories=btn.dataset.action==="all"?new Set(inv):new Set();S.mapInventory=[...S.inventories][0]||"";options();render()});$("sourcesAll").onclick=()=>{S.sectors=new Set(sourceChoices());S.sectorsCleared=false;S.scaleCache=null;options();render()};$("sourcesNone").onclick=()=>{S.sectors.clear();S.sectorsCleared=true;S.scaleCache=null;options();render()};render();
+function setup(){canvas();options();$("themeToggle").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";localStorage.setItem("pops-theme",S.theme);canvas();render()};$("pollutantSelect").onchange=()=>{stopPlayback(false);const key=publishedKey($("pollutantSelect").value);if(key&&!S.demo){loadOnePublishedPollutant(key)}else{render()}};$("mapInventory").onchange=e=>{stopPlayback(false);++S.loadSerial;S.loadingPollutant=null;S.sectorLoadError="";S.mapInventory=e.target.value;S.activePollutant="";S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;options();const key=publishedKey($("pollutantSelect").value);if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else render()};$("yearSlider").oninput=e=>{stopPlayback(false);S.year=+e.target.value;render()};$("resetCountry").onclick=$("closeCountry").onclick=()=>{S.country=null;render()};$("zoomIn").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.scaleBy,1.4);$("zoomOut").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.scaleBy,1/1.4);$("zoomReset").onclick=()=>d3.select("#worldMap").call(S.mapZoomBehavior.transform,d3.zoomIdentity);$("mapTab").onclick=()=>{ $("mapFrame").hidden=false;$("tableWrap").hidden=true;$("mapTab").classList.add("active");$("tableTab").classList.remove("active");$("mapTab").setAttribute("aria-pressed","true");$("tableTab").setAttribute("aria-pressed","false")};$("tableTab").onclick=()=>{$("mapFrame").hidden=true;$("tableWrap").hidden=false;$("tableTab").classList.add("active");$("mapTab").classList.remove("active");$("tableTab").setAttribute("aria-pressed","true");$("mapTab").setAttribute("aria-pressed","false")};$("csvUpload").onchange=e=>importFiles(e.target.files);$("boundaryUpload").onchange=e=>importBoundary(e.target.files[0]);$("exportButton").onclick=exportData;$("demoToggle").onclick=()=>{S.demo=!S.demo;if(!S.demo&&!S.records.length){S.inventories.clear();S.sectors.clear();S.mapInventory=""}else{S.inventories=new Set(data().map(r=>r.inventory));S.sectors=new Set(data().map(r=>r.sector));S.mapInventory=[...S.inventories][0]||"";S.year=yearRange(data()).max}S.country=null;options();render()};$("clearImports").onclick=()=>{if(!confirm("Clear imported records?"))return;S.records=[];S.demo=false;S.inventories.clear();S.sectors.clear();S.country=null;S.mapInventory="";options();render();$("uploadMessage").textContent="Imported records cleared"};$("playButton").onclick=()=>{if(S.playing){stopPlayback();return}const max=+$("yearSlider").max;if(S.year>=max)S.year=+$("yearSlider").min;S.playing=setInterval(()=>{S.year++;$("yearSlider").value=S.year;$("yearNumber").textContent=S.year;$("mapYearBadge").textContent=S.year;updateMapYear();if(S.year>=max)stopPlayback()},650);$("playButton").textContent="Ⅱ"};
+for(const kind of ["inventory"]){$(kind+"Trigger").onclick=()=>{const menu=$(kind+"Menu"),open=menu.hidden;document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);menu.hidden=!open;$(kind+"Trigger").setAttribute("aria-expanded",String(open))}}document.addEventListener("click",e=>{if(!e.target.closest(".multi")){document.querySelectorAll(".multi-menu").forEach(m=>m.hidden=true);for(const kind of ["inventory"])$(kind+"Trigger").setAttribute("aria-expanded","false")}});document.querySelectorAll(".menu-foot button").forEach(btn=>btn.onclick=()=>{const inv=availableInventories();S.inventories=btn.dataset.action==="all"?new Set(inv):new Set();S.mapInventory=[...S.inventories][0]||"";options();render()});$("sourceRetry").onclick=()=>{const code=publishedKey(S.activePollutant);if(code)loadOnePublishedPollutant(code)};$("sourcesAll").onclick=()=>{S.sectors=new Set(sourceChoices());S.sectorsCleared=false;S.scaleCache=null;options();render()};$("sourcesNone").onclick=()=>{S.sectors.clear();S.sectorsCleared=true;S.scaleCache=null;options();render()};render();
 fetch("./data/boundaries/world_india.geojson").then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(g=>{if(g.type!=="FeatureCollection")throw Error("Unexpected GeoJSON");S.world=g;S.unifiedMap=true;render()}).catch(e=>{$("mapCount").textContent="Basemap unavailable · "+e.message;d3.select("#worldMap").append("text").attr("x",500).attr("y",200).attr("fill","#c1d8e7").attr("text-anchor","middle").text("Map unavailable; internet required")})}
 if(!window.d3){document.body.insertAdjacentHTML("afterbegin",'<div style="padding:20px;background:#612;color:#fff">Could not load D3. Please check network access.</div>');return}setup();
 
@@ -116,6 +137,7 @@ async function loadPublishedEDGAR() {
     if(manifest.schema!==1||manifest.inventory!=="EDGAR"||!manifest.pollutants||!Object.keys(manifest.pollutants).length)
       throw Error("Invalid EDGAR manifest");
     S.published=manifest;
+    options();
     await loadOnePublishedPollutant(manifest.pollutants.PCB?"PCB":Object.keys(manifest.pollutants)[0]);
   }catch(e){
     console.error("EDGAR catalog could not load",e);
@@ -126,6 +148,10 @@ async function loadOnePublishedPollutant(code){
   const info=S.published?.pollutants?.[code];
   if(!info)return;
   const serial=++S.loadSerial;
+  S.loadingPollutant=code;S.sectorLoadError="";S.activePollutant=publishedLabel(code);
+  $("pollutantSelect").value=S.activePollutant;
+  $("sourceStatus").textContent="Loading EDGAR observations…";
+  $("sourceRetry").hidden=true;
   $("uploadMessage").textContent="Loading EDGAR "+publishedLabel(code)+"…";
   try {
     let rows=S.publishedCache.get(code);
@@ -142,7 +168,7 @@ async function loadOnePublishedPollutant(code){
         const [country,iso,year,sector,emissions]=item;
         if(typeof country!=="string"||typeof iso!=="string"||!Number.isInteger(year)||!Number.isFinite(emissions)||emissions<0)
           throw Error("Invalid emissions record "+index);
-        return{country,iso,year,sector,emissions,pollutant:publishedLabel(code),inventory:"EDGAR",region:"Unclassified"};
+        return{country,iso,year,sector:edgarSectorLabel(sector),emissions,pollutant:publishedLabel(code),inventory:"EDGAR",region:"Unclassified"};
       });
       if(!rows.length)throw Error("Empty EDGAR dataset: "+code);
       S.publishedCache.set(code,rows);
@@ -153,16 +179,21 @@ async function loadOnePublishedPollutant(code){
     S.demo=false;
     S.country=null;
     S.inventories=new Set(["EDGAR",...existing.map(r=>r.inventory)]);
-    S.sectors=new Set(rows.map(r=>r.sector));S.sectorsCleared=false;
+    if(!S.sectors.size&&!S.sectorsCleared)S.sectors=new Set(EDGAR_SECTORS);
     S.mapInventory="EDGAR";
     S.year=yearRange(rows).max;
-    $("pollutantSelect").value=publishedLabel(code);
+    S.loadingPollutant=null;S.activePollutant=publishedLabel(code);
+    $("pollutantSelect").value=S.activePollutant;
     options();
     render();
     $("uploadMessage").textContent="EDGAR "+publishedLabel(code)+" loaded: "+rows.length.toLocaleString()+" observations.";
   }catch(e){
     if(serial!==S.loadSerial)return;
     console.error("EDGAR load failed for "+code,e);
+    S.loadingPollutant=null;
+    S.sectorLoadError="EDGAR observations unavailable: "+e.message;
+    $("sourceStatus").textContent=S.sectorLoadError;
+    $("sourceRetry").hidden=false;
     $("uploadMessage").textContent="EDGAR "+publishedLabel(code)+" unavailable: "+e.message;
   }
 }
