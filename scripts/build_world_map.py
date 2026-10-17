@@ -46,7 +46,7 @@ def polygons_only(geom):
 def rounded_coords(value):
     if isinstance(value, (list, tuple)):
         return [rounded_coords(item) for item in value]
-    value = round(float(value), 5)
+    value = round(float(value), 8)
     if not math.isfinite(value):
         raise ValueError("Non-finite coordinate")
     return value
