@@ -1,0 +1,9 @@
+{
+  "name": "pops-inventory-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static POPs emissions inventory research dashboard",
+  "scripts": {
+    "build": "node scripts/build-static.mjs"
+  }
+}
