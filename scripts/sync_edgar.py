@@ -32,19 +32,34 @@ POLLUTANTS = ("PCB", "HCB", "PAH_BaP", "PAH_BbF", "PAH_BkF", "PAH_IcdP")
 # Exclude until a dedicated TEQ-aware presentation and parser is implemented.
 # Mappings based on the annual, sector-specific IPCC 2006 categories on
 # https://edgar.jrc.ec.europa.eu/dataset_pop81 (do not map generic 1A blindly).
+# EDGAR v8.1 annual country workbooks use dotted IPCC codes. The gridded
+# downloads use compact codes; these are aliases for the SAME sector groups.
+# Keep exact, explicit aliases: never guess an unknown IPCC hierarchy.
 SECTOR_MAP = {
-    "1A1a": "Power Industry",
-    "1A1b+1A1ci+1A1cii+1A5biii+1B1b+1B2aiii6+1B2biii3+1B1c": "Fuel Exploitation",
+    "1A1A": "Power Industry",
+    "1A1BC": "Fuel Exploitation",
+    "1A1B+1A1CI+1A1CII+1A5BIII+1B1B+1B2AIII6+1B2BIII3+1B1C": "Fuel Exploitation",
     "1A2": "Industrial Combustion",
-    "1A3b": "Transport",
-    "1A3c+1A3e": "Transport",
-    "1A3d": "Transport",
+    "1A3B": "Transport",
+    "1A3BNORES": "Transport",  # EDGAR annual workbook: 1.A.3.b_noRES
+    "1A3C+1A3E": "Transport",
+    "1A3D": "Transport",
+    "1A4": "Buildings",
+    "1A5": "Buildings",
     "1A4+1A5": "Buildings",
+    "2C": "Processes",
     "2C1+2C2": "Processes",
     "2C3+2C4+2C5+2C6+2C7": "Processes",
-    "3C1b": "Agriculture",
+    "3C1B": "Agriculture",
     "4C": "Waste",
 }
+
+def sector_for_code(raw_code: str) -> str | None:
+    # E.g. 1.A.1.a -> 1A1A and 1.A.3.b_noRES -> 1A3BNORES.
+    # Preserve '+' between composite IPCC categories.
+    key = re.sub(r"[^a-zA-Z0-9+]", "", raw_code).upper()
+    return SECTOR_MAP.get(key)
+
 FIELDS = ["country", "iso3", "year", "pollutant", "inventory",
           "emission_source", "emissions_tonnes_per_year", "unit"]
 HEADERS = {"countrycodea3": "iso", "name": "country",
@@ -158,7 +173,8 @@ def workbook_rows(raw: bytes, pollutant: str):
                 continue
             if len(iso) != 3 or not iso.isalpha():
                 raise ValueError(f"{pollutant}: non-country ISO code '{iso}' for {country}")
-            if code not in SECTOR_MAP:
+            sector = sector_for_code(code)
+            if sector is None:
                 unknown[code] += 1
                 continue
             for j, year in years.items():
@@ -169,7 +185,7 @@ def workbook_rows(raw: bytes, pollutant: str):
                     raise ValueError(f"{pollutant}: nonnumeric value {value!r} ({country}, {year}, {code})")
                 if value < 0:
                     raise ValueError(f"{pollutant}: negative emissions ({country}, {year}, {code})")
-                outputs.append((country, iso, year, SECTOR_MAP[code], float(value) * 1000))
+                outputs.append((country, iso, year, sector, float(value) * 1000))
         if unknown:
             raise ValueError(f"{pollutant}: unrecognized IPCC 2006 codes; refusing partial totals: {dict(unknown)}")
         if not outputs:
@@ -196,9 +212,9 @@ def collect(zip_bytes: bytes, pollutant: str):
         current[4] += value
     if len(set(names)) != len(names):
         raise ValueError("Duplicate workbook names inside archive")
-    results = [v for v in dedup.values() if v[4] > 0]  # positive observations
-    if not results:
-        raise ValueError(f"{pollutant}: all aggregate values were zero")
+    results = list(dedup.values())  # keep genuine zeros for lowest-country rankings
+    if not results or not any(r[4] > 0 for r in results):
+        raise ValueError(f"{pollutant}: no positive aggregate values found")
     return sorted(results, key=lambda r: (r[2], r[1], r[3])), hashes
 
 def build(output: Path, only: set[str] | None = None):
