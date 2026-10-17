@@ -362,3 +362,55 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
 .reference-support{margin-top:17px}
 @media(max-width:760px){.guide-steps,.guide-tips,.reference-support{grid-template-columns:minmax(0,1fr)}.guide-step{grid-template-columns:44px minmax(0,1fr);gap:11px}.guide-step-number{width:42px;height:42px;font-size:16px}.reference-overview{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.reference-stat{padding:12px}.reference-stat strong{font-size:17px}.reference-stat span{font-size:12px}}
 @media(max-width:440px){.reference-overview{grid-template-columns:minmax(0,1fr)}.reference-stat{padding:13px 15px}.guide-step h2{font-size:17px}}
+
+
+/* Readability pass: give the map and chart content priority over decorative margins. */
+@media(min-width:1180px){.top-grid{grid-template-columns:minmax(0,1fr) minmax(320px,360px)!important}.bottom-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1.4fr) minmax(0,1fr)!important}.bottom-grid>.insights-panel{grid-column:1/-1}.insights-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:701px) and (max-width:1179px){.top-grid{grid-template-columns:minmax(0,1fr)!important}.bottom-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){.bottom-grid{grid-template-columns:minmax(0,1fr)!important}}
+.map-frame{display:grid!important;grid-template-columns:clamp(96px,9vw,130px) minmax(0,1fr)!important;gap:8px!important;height:auto!important;aspect-ratio:auto!important;min-height:0!important;background:var(--panel)!important;align-items:stretch}
+.map-viewport{width:100%;height:auto!important;aspect-ratio:1000/465!important;background:var(--ocean-fill);align-self:center}
+.map-viewport svg{width:100%;height:auto!important;aspect-ratio:1000/465;display:block}
+.map-legend{width:100%!important;height:auto!important;min-height:0!important;padding:13px 8px!important;display:flex;flex-direction:column;gap:10px;align-items:stretch;background:var(--panel2)!important;border:1px solid var(--line);border-radius:10px!important;overflow:hidden}
+.map-legend .legend-title{font-size:clamp(12px,1.05vw,15px)!important;line-height:1.3!important;letter-spacing:.4px;text-align:left;color:var(--text);overflow-wrap:normal!important;word-break:normal!important}
+.legend-title span{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-top:4px}
+.legend-ramp{display:flex;align-items:stretch;gap:9px;flex:1;min-height:125px}
+.map-legend .legend-scale{height:auto!important;min-height:125px;width:clamp(17px,1.8vw,24px)!important;flex:0 0 clamp(17px,1.8vw,24px);margin:0!important}
+.legend-ticks{display:flex;flex-direction:column;justify-content:space-between;min-width:0;gap:5px}
+.map-legend .legend-number{font-size:clamp(12px,1vw,14px)!important;text-align:left;white-space:nowrap!important;word-break:normal!important;overflow-wrap:normal!important;line-height:1.3}
+.map-legend .legend-empty{font-size:12px!important;display:flex;justify-content:flex-start;flex-wrap:nowrap!important;white-space:nowrap!important;align-items:center;gap:7px}
+.map-legend .legend-empty b{width:12px;height:12px}
+.ocean-labels text{font-size:10px!important;letter-spacing:.45px!important;font-weight:700;opacity:.85}
+.map-zoom{position:absolute;top:12px;right:12px;display:flex!important;flex-direction:row!important;gap:6px;z-index:4;opacity:0;visibility:hidden;pointer-events:none;transform:none!important;transition:opacity .16s ease,visibility .16s ease}
+.map-frame:hover .map-zoom,.map-frame:focus-within .map-zoom{opacity:1;visibility:visible;pointer-events:auto}
+.map-zoom button,.map-zoom button:first-child,.map-zoom button:last-child{box-sizing:border-box;width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;padding:0!important;border-radius:7px!important;display:grid;place-items:center;font-size:19px}
+.plot-wrap{height:330px;position:relative}
+.regional-slot{min-height:330px;position:relative}
+.regional-slot svg{width:100%;height:auto;max-height:none}
+.axis-title{fill:var(--muted);font-size:14px;font-weight:600}
+.chart-axis text{font-size:13px!important}
+.legend-key{font-size:12px;line-height:1.45}
+.donut-item{font-size:13px}
+.donut-sub{font-size:12px}
+.plot-tooltip{position:absolute;z-index:8;pointer-events:none;display:flex;flex-direction:column;gap:4px;max-width:min(280px,85%);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--text);font-size:13px;box-shadow:var(--shadow)}
+.plot-tooltip[hidden]{display:none}
+.plot-tooltip strong{font-size:14px}
+.plot-tooltip span{color:var(--muted)}
+@media(max-width:700px){
+ .map-frame{grid-template-columns:84px minmax(0,1fr)!important;gap:5px!important}
+ .map-legend{padding:8px 5px!important;gap:6px!important}
+ .map-legend .legend-title{font-size:11px!important}
+ .legend-title span{font-size:10px}
+ .legend-ramp{gap:5px;min-height:75px}
+ .map-legend .legend-scale{min-height:75px;width:13px!important;flex-basis:13px}
+ .map-legend .legend-number{font-size:10px!important}
+ .map-legend .legend-empty{font-size:10px!important;gap:4px}
+ .map-legend .legend-empty b{width:9px;height:9px}
+ .ocean-labels text{font-size:9px!important;letter-spacing:0!important}
+ .map-zoom{opacity:1;visibility:visible;pointer-events:auto;top:6px;right:6px}
+ .map-zoom button,.map-zoom button:first-child,.map-zoom button:last-child{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;font-size:16px}
+ .plot-wrap{height:290px}
+ .regional-slot{min-height:250px}
+ .chart-axis text{font-size:12px!important}
+}
+@media(max-width:380px){.map-frame{grid-template-columns:77px minmax(0,1fr)!important}.map-legend .legend-number{font-size:9px!important}}
