@@ -3,20 +3,24 @@
 const $=id=>document.getElementById(id),norm=s=>String(s??"").toLowerCase().replace(/[^a-z0-9]/g,""),fmt=v=>Number.isFinite(v)?v.toLocaleString("en-US",{maximumFractionDigits:v<1?5:2}):"—",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const SECTORS=["Power Industry","Industrial combustion","Buildings","Transport","Agriculture","Fuel exploitation","Processes","Waste"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
 // Use the official EDGAR v8.1 POPs category names across controls and charts.
-const EDGAR_SECTORS=SECTORS;
+const EDGAR_SECTORS=SECTORS, BREIVIK_SECTOR="Not sector-resolved";
 function edgarSectorLabel(source){return({"Industrial Combustion":"Industrial combustion","Fuel Exploitation":"Fuel exploitation"})[source]||source;}
 const special={unitedstatesofamerica:"unitedstates",russianfederation:"russia",czechia:"czechrepublic",republicofkorea:"southkorea",vietnam:"vietnam"};const canon=s=>special[norm(s)]||norm(s);
 const DEMO_COUNTRIES=[["China","CHN","Asia",12100],["United States","USA","North America",8500],["India","IND","Asia",4200],["Russia","RUS","Europe",3500],["Japan","JPN","Asia",2210],["Germany","DEU","Europe",1760],["Brazil","BRA","South America",1310],["United Kingdom","GBR","Europe",1050],["France","FRA","Europe",940],["Canada","CAN","North America",870],["Australia","AUS","Oceania",490],["South Africa","ZAF","Africa",710],["Nigeria","NGA","Africa",460],["Argentina","ARG","South America",280],["Chile","CHL","South America",85],["Iceland","ISL","Europe",.12],["Luxembourg","LUX","Europe",.18],["New Zealand","NZL","Oceania",.25]];
 const DEMO_INVENTORIES=["EDGAR","Breivik"];
-const S={published:null,publishedCache:new Map(),loadSerial:0,activePollutant:"",loadingPollutant:null,sectorLoadError:"",sectorsCleared:false,regionLookup:{},mapTransform:null,mapZoomBehavior:null,scaleCache:null,demo:false,records:[],inventories:new Set(DEMO_INVENTORIES),sectors:new Set(SECTORS),mapInventory:"EDGAR",country:null,world:null,india:null,zoom:1,year:2020,playing:null,hiddenBanner:false,theme:localStorage.getItem("pops-theme")==="light"?"light":"dark"};
+const S={published:null,publishedCache:new Map(),breivik:null,breivikCache:new Map(),loadSerial:0,activePollutant:"",loadingPollutant:null,sectorLoadError:"",sectorsCleared:false,regionLookup:{},mapTransform:null,mapZoomBehavior:null,scaleCache:null,demo:false,records:[],inventories:new Set(DEMO_INVENTORIES),sectors:new Set(SECTORS),mapInventory:"EDGAR",country:null,world:null,india:null,zoom:1,year:2020,playing:null,hiddenBanner:false,theme:localStorage.getItem("pops-theme")==="light"?"light":"dark"};
 function makeDemo(){const a=[];for(const [country,iso,region,base] of DEMO_COUNTRIES){for(let year=1990;year<=2024;year++){for(let si=0;si<SECTORS.length;si++){for(const [i,inv] of DEMO_INVENTORIES.entries()){const factor=1-(year-1990)*.013,shares=[.31,.24,.09,.15,.09,.04,.05,.03];a.push({country,iso,region,year,pollutant:"PCB (illustrative)",inventory:inv,sector:SECTORS[si],emissions:base*Math.max(.1,factor)*shares[si]*(i?0.91:1)*(1+.04*Math.sin(year*.35+si))})}}}}return a}
 function data(){return S.demo?makeDemoCached:S.records}const makeDemoCached=makeDemo();
 function yearRange(rows){let lo=Infinity,hi=-Infinity;for(const r of rows){if(r.year<lo)lo=r.year;if(r.year>hi)hi=r.year}return{min:Number.isFinite(lo)?lo:2000,max:Number.isFinite(hi)?hi:2024}}
 const publishedLabel=code=>code==="PCB"?"PCB (aggregate, unintentional)":code;
 const publishedKey=label=>S.published&&Object.keys(S.published.pollutants||{}).find(code=>publishedLabel(code)===label);
-function availableInventories(){return [...new Set([...data().map(r=>r.inventory),...(S.published?["EDGAR"]:[])])].sort()}
-function pollutantsFor(inv){const list=[...new Set(data().filter(r=>r.inventory===inv).map(r=>r.pollutant))];if(inv==="EDGAR"&&S.published)list.push(...Object.keys(S.published.pollutants).map(publishedLabel));return [...new Set(list)].sort()}
+const breivikLabel=code=>S.breivik?.pollutants?.[code]?.display_name||code;
+const breivikKey=label=>S.breivik&&Object.keys(S.breivik.pollutants||{}).find(code=>breivikLabel(code)===label);
+function availableInventories(){return [...new Set([...data().map(r=>r.inventory),...(S.published?["EDGAR"]:[]),...(S.breivik?["Breivik"]:[])])].sort()}
+function pollutantsFor(inv){const list=[...new Set(data().filter(r=>r.inventory===inv).map(r=>r.pollutant))];if(inv==="EDGAR"&&S.published)list.push(...Object.keys(S.published.pollutants).map(publishedLabel));
+ if(inv==="Breivik"&&S.breivik)list.push(...Object.keys(S.breivik.pollutants).map(breivikLabel));return [...new Set(list)].sort()}
 function sourceChoices(){
+ if(S.mapInventory==="Breivik"&&S.breivik)return [BREIVIK_SECTOR];
  if(S.mapInventory==="EDGAR"&&S.published)return [...EDGAR_SECTORS];
  return [...new Set(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant).map(r=>r.sector))].sort();
 }
@@ -41,7 +45,9 @@ function options(){
  const available=new Set(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant).map(r=>r.sector));
  const loading=S.mapInventory==="EDGAR"&&S.loadingPollutant!=null;
  const status=$("sourceStatus");
- if(S.sectorLoadError)status.textContent=S.sectorLoadError;
+ $("sourceCard").hidden=S.mapInventory==="Breivik";
+ if(S.mapInventory==="Breivik")status.textContent="No source-sector categories are provided by Breivik et al. (2016).";
+ else if(S.sectorLoadError)status.textContent=S.sectorLoadError;
  else if(loading)status.textContent="Loading EDGAR observations…";
  else if(!sectors.length)status.textContent="No source categories available for this selection.";
  else if(!available.size)status.textContent="Select a pollutant to load its source observations.";
@@ -55,7 +61,7 @@ function options(){
   input.addEventListener("change",()=>{input.checked?S.sectors.add(sector):S.sectors.delete(sector);S.sectorsCleared=S.sectors.size===0;S.scaleCache=null;render()});
   label.append(input,document.createTextNode(sector));root.append(label);
  });
- const bounds=yearRange(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant));
+ const bounds=S.mapInventory==="Breivik"&&S.breivik?{min:S.breivik.years[0],max:S.breivik.years[1]}:yearRange(data().filter(r=>r.inventory===S.mapInventory&&r.pollutant===S.activePollutant));
  $("yearSlider").min=bounds.min;$("yearSlider").max=bounds.max;
  S.year=Math.max(bounds.min,Math.min(bounds.max,S.year));$("yearSlider").value=S.year;
  $("yearMin").textContent=bounds.min;$("yearMax").textContent=bounds.max;
@@ -96,8 +102,8 @@ function KPIs(){
  $("coverageRows").textContent=S.demo?"Illustrative":data().length.toLocaleString();
 }
 function rankings(){const c=byCountry().sort((a,b)=>b.value-a.value);let top=c.slice(0,3),low=c.slice().reverse().slice(0,3);for(const [id,items,isLow] of [["rankTop",top,false],["rankLow",low,true]]){const root=$(id);root.replaceChildren();if(!items.length){root.innerHTML='<div class="empty-chart">No country data</div>';continue}const max=Math.max(...items.map(a=>a.value),.00001);items.forEach((v,i)=>{const row=document.createElement("div");row.className="rank-row"+(isLow?" low-rank":"");row.innerHTML='<span class="rank-position">'+(i+1)+'</span><span class="rank-name" title="'+esc(v.name)+'">'+esc(v.name)+'</span><div class="rank-track"><div class="rank-fill" style="width:'+Math.max(v.value?3:0,v.value/max*100)+'%"></div></div><b class="rank-value">'+fmt(v.value)+'</b>';row.onclick=()=>{S.country=v.name;render()};row.style.cursor="pointer";root.append(row)})}}
-function linePlot(){const root=d3.select("#trendPlot");root.selectAll("*").remove();const leg=$("trendLegend");leg.replaceChildren();const sources=[...S.sectors];let series=sources.map((sector,i)=>({name:sector,color:COLORS[SECTORS.indexOf(sector)%COLORS.length],points:grouped(filter(S.mapInventory,S.year,S.country,false,true).filter(r=>r.sector===sector),"year").map(v=>({year:+v.name,value:v.value})).sort((a,b)=>a.year-b.year)})).filter(s=>s.points.length);$("trendScope").textContent=S.country||"GLOBAL";$("trendSubtitle").textContent=(S.mapInventory||"No inventory")+" · "+(S.country||"worldwide")+" · tonnes/year";if(!series.length){root.html('<div class="empty-chart">No emissions history for this selection</div>');return}series.forEach(s=>{let el=document.createElement("span");el.className="legend-key";el.innerHTML='<i style="background:'+s.color+'"></i>'+esc(s.name);leg.append(el)});const w=760,h=320,m={top:22,right:20,bottom:49,left:82},ys=series.flatMap(s=>s.points),ext=d3.extent(ys,d=>d.year),x=d3.scaleLinear().domain(ext[0]===ext[1]?[ext[0]-1,ext[1]+1]:ext).range([m.left,w-m.right]),y=d3.scaleLinear().domain([0,d3.max(ys,d=>d.value)||1]).nice().range([h-m.bottom,m.top]),svg=root.append("svg").attr("viewBox","0 0 "+w+" "+h).attr("preserveAspectRatio","xMidYMid meet");svg.selectAll(".grid").data(y.ticks(5)).join("line").attr("x1",m.left).attr("x2",w-m.right).attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke","var(--line)").attr("opacity",.6);svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.bottom)+")").call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")));svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.left+",0)").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")));series.forEach(s=>{svg.append("path").datum(s.points).attr("fill","none").attr("stroke",s.color).attr("stroke-width",2.4).attr("d",d3.line().x(d=>x(d.year)).y(d=>y(d.value)));const dots=svg.selectAll("circle.c"+norm(s.name)).data(s.points).join("circle").attr("cx",d=>x(d.year)).attr("cy",d=>y(d.value)).attr("r",3.3).attr("fill",s.color).style("cursor","crosshair");plotTooltip(root.node(),dots,d=>"<strong>"+esc(s.name)+" · "+d.year+"</strong><span>"+fmt(d.value)+" tonnes/year</span>")});svg.append("text").attr("class","axis-title").attr("transform","translate(20,"+((m.top+h-m.bottom)/2)+") rotate(-90)").attr("text-anchor","middle").text("Emissions (tonnes/year)");svg.append("line").attr("x1",x(S.year)).attr("x2",x(S.year)).attr("y1",m.top).attr("y2",h-m.bottom).attr("stroke","var(--muted)").attr("stroke-dasharray","4 4").attr("opacity",.8)}
-function donut(){const root=d3.select("#sectorDonut");root.selectAll("*").remove();const list=$("sectorLegend");list.replaceChildren();const items=grouped(filter(S.mapInventory,S.year,null,true),"sector").sort((a,b)=>b.value-a.value),total=sum(items.map(v=>({emissions:v.value})));if(!total){root.html('<div class="empty-chart">No sector breakdown</div>');return}const w=240,h=220,r=88,g=root.append("svg").attr("viewBox","0 0 "+w+" "+h).append("g").attr("transform","translate(120,110)"),pie=d3.pie().sort(null).value(d=>d.value);const slices=g.selectAll("path").data(pie(items)).join("path").attr("d",d3.arc().innerRadius(58).outerRadius(r)).attr("fill",d=>COLORS[SECTORS.indexOf(d.data.name)%COLORS.length]).attr("stroke","var(--panel)").attr("stroke-width",2).style("cursor","crosshair");plotTooltip(root.node(),slices,d=>"<strong>"+esc(d.data.name)+"</strong><span>"+fmt(d.data.value)+" tonnes/year · "+fmt(100*d.data.value/total)+"%</span>");g.append("text").attr("text-anchor","middle").attr("y",0).attr("fill","var(--text)").attr("font-size",23).attr("font-weight",700).text(fmt(total));g.append("text").attr("text-anchor","middle").attr("y",18).attr("fill","var(--muted)").attr("font-size",10).text("tonnes/year");items.forEach(v=>{const color=COLORS[SECTORS.indexOf(v.name)%COLORS.length],div=document.createElement("div");div.className="donut-item";div.innerHTML='<span><i style="background:'+color+'"></i>'+esc(v.name)+'</span><b>'+fmt(v.value/total*100)+'%<span class="donut-sub">'+fmt(v.value)+' t/yr</span></b>';list.append(div)})}
+function linePlot(){const root=d3.select("#trendPlot");root.selectAll("*").remove();const leg=$("trendLegend");leg.replaceChildren();const sources=[...S.sectors];let series=sources.map((sector,i)=>({name:sector,color:COLORS[Math.max(0,SECTORS.indexOf(sector))%COLORS.length],points:grouped(filter(S.mapInventory,S.year,S.country,false,true).filter(r=>r.sector===sector),"year").map(v=>({year:+v.name,value:v.value})).sort((a,b)=>a.year-b.year)})).filter(s=>s.points.length);$("trendScope").textContent=S.country||"GLOBAL";$("trendSubtitle").textContent=(S.mapInventory||"No inventory")+" · "+(S.country||"worldwide")+" · tonnes/year";if(!series.length){root.html('<div class="empty-chart">No emissions history for this selection</div>');return}series.forEach(s=>{let el=document.createElement("span");el.className="legend-key";el.innerHTML='<i style="background:'+s.color+'"></i>'+esc(s.name);leg.append(el)});const w=760,h=320,m={top:22,right:20,bottom:49,left:82},ys=series.flatMap(s=>s.points),ext=d3.extent(ys,d=>d.year),x=d3.scaleLinear().domain(ext[0]===ext[1]?[ext[0]-1,ext[1]+1]:ext).range([m.left,w-m.right]),y=d3.scaleLinear().domain([0,d3.max(ys,d=>d.value)||1]).nice().range([h-m.bottom,m.top]),svg=root.append("svg").attr("viewBox","0 0 "+w+" "+h).attr("preserveAspectRatio","xMidYMid meet");svg.selectAll(".grid").data(y.ticks(5)).join("line").attr("x1",m.left).attr("x2",w-m.right).attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke","var(--line)").attr("opacity",.6);svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.bottom)+")").call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")));svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.left+",0)").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("~s")));series.forEach(s=>{svg.append("path").datum(s.points).attr("fill","none").attr("stroke",s.color).attr("stroke-width",2.4).attr("d",d3.line().x(d=>x(d.year)).y(d=>y(d.value)));const dots=svg.selectAll("circle.c"+norm(s.name)).data(s.points).join("circle").attr("cx",d=>x(d.year)).attr("cy",d=>y(d.value)).attr("r",3.3).attr("fill",s.color).style("cursor","crosshair");plotTooltip(root.node(),dots,d=>"<strong>"+esc(s.name)+" · "+d.year+"</strong><span>"+fmt(d.value)+" tonnes/year</span>")});svg.append("text").attr("class","axis-title").attr("transform","translate(20,"+((m.top+h-m.bottom)/2)+") rotate(-90)").attr("text-anchor","middle").text("Emissions (tonnes/year)");svg.append("line").attr("x1",x(S.year)).attr("x2",x(S.year)).attr("y1",m.top).attr("y2",h-m.bottom).attr("stroke","var(--muted)").attr("stroke-dasharray","4 4").attr("opacity",.8)}
+function donut(){const root=d3.select("#sectorDonut");root.selectAll("*").remove();const list=$("sectorLegend");list.replaceChildren();if(S.mapInventory==="Breivik"){root.html('<div class="empty-chart">Source-sector breakdown not available in the Breivik inventory.</div>');return}const items=grouped(filter(S.mapInventory,S.year,null,true),"sector").sort((a,b)=>b.value-a.value),total=sum(items.map(v=>({emissions:v.value})));if(!total){root.html('<div class="empty-chart">No sector breakdown</div>');return}const w=240,h=220,r=88,g=root.append("svg").attr("viewBox","0 0 "+w+" "+h).append("g").attr("transform","translate(120,110)"),pie=d3.pie().sort(null).value(d=>d.value);const slices=g.selectAll("path").data(pie(items)).join("path").attr("d",d3.arc().innerRadius(58).outerRadius(r)).attr("fill",d=>COLORS[SECTORS.indexOf(d.data.name)%COLORS.length]).attr("stroke","var(--panel)").attr("stroke-width",2).style("cursor","crosshair");plotTooltip(root.node(),slices,d=>"<strong>"+esc(d.data.name)+"</strong><span>"+fmt(d.data.value)+" tonnes/year · "+fmt(100*d.data.value/total)+"%</span>");g.append("text").attr("text-anchor","middle").attr("y",0).attr("fill","var(--text)").attr("font-size",23).attr("font-weight",700).text(fmt(total));g.append("text").attr("text-anchor","middle").attr("y",18).attr("fill","var(--muted)").attr("font-size",10).text("tonnes/year");items.forEach(v=>{const color=COLORS[SECTORS.indexOf(v.name)%COLORS.length],div=document.createElement("div");div.className="donut-item";div.innerHTML='<span><i style="background:'+color+'"></i>'+esc(v.name)+'</span><b>'+fmt(v.value/total*100)+'%<span class="donut-sub">'+fmt(v.value)+' t/yr</span></b>';list.append(div)})}
 function region(){
  const root=d3.select("#regionalChart");root.selectAll("*").remove();
  const rows=filter(S.mapInventory,S.year,null,true).filter(isCountryRecord).map(r=>({...r,region:S.regionLookup[r.iso]}));
@@ -119,8 +125,8 @@ function insights(){
  $("insightTop3").textContent=global?fmt(top3/global*100)+"%":"—";
  $("insightPositive").textContent=String(c.filter(r=>r.value>0).length);
  const sec=grouped(filter(S.mapInventory,S.year,null,true),"sector").sort((a,b)=>b.value-a.value);
- $("insightSector").textContent=sec[0]?.name||"—";
- $("insightSectorShare").textContent=global&&sec.length?fmt(sec[0].value/global*100)+"% of global emissions":"No observations";
+ $("insightSector").textContent=S.mapInventory==="Breivik"?"Not available":sec[0]?.name||"—";
+ $("insightSectorShare").textContent=S.mapInventory==="Breivik"?"No sector-level estimates":global&&sec.length?fmt(sec[0].value/global*100)+"% of global emissions":"No observations";
  const firstYear=yearRange(filter(S.mapInventory,S.year,null,true,true)).min,first=sum(filter(S.mapInventory,firstYear,null,true));
  $("insightLongChange").textContent=first?(global>=first?"+":"")+fmt((global/first-1)*100)+"%":"—";
  $("insightPeriod").textContent=firstYear+"–"+S.year+" · against first reported year";
@@ -147,7 +153,7 @@ const MAP_COLORS=["#275d9a","#36bfd0","#6ed393","#f4dd57","#f68e45","#c63856"];
 function mapScale(){
  const key=[S.mapInventory,$("pollutantSelect").value,[...S.sectors].sort().join("|"),S.records.length].join("~");
  if(S.scaleCache?.key===key)return S.scaleCache;
- const totals=new Map();for(const r of data()){if(r.inventory!==S.mapInventory||r.pollutant!==$("pollutantSelect").value||!S.sectors.has(r.sector))continue;const key=r.iso+"|"+r.year;totals.set(key,(totals.get(key)||0)+r.emissions)}
+ const totals=new Map();for(const r of data()){if(r.iso==="ZZZ"||r.inventory!==S.mapInventory||r.pollutant!==$("pollutantSelect").value||!S.sectors.has(r.sector))continue;const key=r.iso+"|"+r.year;totals.set(key,(totals.get(key)||0)+r.emissions)}
  const vals=[...totals.values()].filter(v=>v>0).sort((a,b)=>a-b),upper=vals.length?vals[Math.floor((vals.length-1)*.98)]:1,lower=vals.length?Math.max(vals[0],upper/10000):1e-6;
  S.scaleCache={key,upper,lower,scale:d3.scaleSequentialLog(d3.interpolateRgbBasis(MAP_COLORS)).domain([lower,Math.max(lower*1.001,upper)]).clamp(true)};return S.scaleCache;
 }
@@ -211,8 +217,8 @@ function exportData(){let rows=filter(S.mapInventory,S.year,S.country);if(!rows.
 function stopPlayback(redraw=true){if(S.playing){clearInterval(S.playing);S.playing=null;$("playButton").textContent="▶";if(redraw)render()}}
 function setup(){canvas();options();
 $("themeToggle").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";localStorage.setItem("pops-theme",S.theme);canvas();render()};
-$("pollutantSelect").onchange=()=>{stopPlayback(false);S.activePollutant=$("pollutantSelect").value;S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;const key=publishedKey(S.activePollutant);if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else{options();render()}};
-$("inventorySelect").onchange=e=>{stopPlayback(false);++S.loadSerial;S.loadingPollutant=null;S.sectorLoadError="";S.mapInventory=e.target.value;S.activePollutant="";S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;options();const key=publishedKey(S.activePollutant);if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else render()};
+$("pollutantSelect").onchange=()=>{stopPlayback(false);S.activePollutant=$("pollutantSelect").value;S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;const key=publishedKey(S.activePollutant),bk=breivikKey(S.activePollutant);if(bk&&S.mapInventory==="Breivik")loadOneBreivikPollutant(bk);else if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else{options();render()}};
+$("inventorySelect").onchange=e=>{stopPlayback(false);++S.loadSerial;S.loadingPollutant=null;S.sectorLoadError="";S.mapInventory=e.target.value;S.activePollutant="";S.sectors=new Set();S.sectorsCleared=false;S.scaleCache=null;if(S.mapInventory==="Breivik")S.year=2016;options();const key=publishedKey(S.activePollutant),bk=breivikKey(S.activePollutant);if(bk&&S.mapInventory==="Breivik")loadOneBreivikPollutant(bk);else if(key&&S.mapInventory==="EDGAR"&&!S.demo)loadOnePublishedPollutant(key);else render()};
 let yearFrame=0,yearPending=null;
 $("yearSlider").oninput=e=>{
  stopPlayback(false);yearPending=+e.target.value;
@@ -331,4 +337,49 @@ loadLocalIndiaBoundary();
 
 fetch("./data/country-regions.json").then(r=>r.ok?r.json():Promise.reject(Error("Regional lookup missing"))).then(x=>{S.regionLookup=x.regions||{};for(const r of S.records)if(!r.region||r.region==="Unclassified")r.region=S.regionLookup[r.iso]||r.region;render()}).catch(e=>console.warn("Region lookup",e));
 loadPublishedEDGAR();
+loadPublishedBreivik();
+
+/* Breivik 2016 is independent of EDGAR. One congener is loaded on demand.
+   ZZZ preserves offshore emissions in global totals, never in country rankings. */
+async function loadPublishedBreivik(){
+ try{
+  const response=await fetch("./data/breivik/default/manifest.json",{cache:"no-cache"});
+  if(!response.ok){if(response.status!==404)console.warn("Breivik manifest HTTP "+response.status);return}
+  const manifest=await response.json();
+  if(manifest.schema!==1||manifest.inventory!=="Breivik"||manifest.scenario!=="Default"||manifest.units!=="tonnes/year"||Object.keys(manifest.pollutants||{}).length!==23)throw Error("Invalid Breivik manifest");
+  S.breivik=manifest;options();render();
+ }catch(e){console.error("Breivik catalog could not load",e)}
+}
+async function loadOneBreivikPollutant(code){
+ const info=S.breivik?.pollutants?.[code];if(!info)return;
+ const serial=++S.loadSerial;
+ S.loadingPollutant=code;S.sectorLoadError="";S.activePollutant=breivikLabel(code);
+ $("mapCount").textContent="Loading Breivik "+S.activePollutant+"…";
+ try{
+  let rows=S.breivikCache.get(code);
+  if(!rows){
+   if(!/^(PCB[0-9]+|Sum22)$/.test(code)||info.path!=="data/breivik/default/"+code+".json")throw Error("Unexpected Breivik data path");
+   const response=await fetch("./"+info.path+"?v="+String(S.breivik.source_archive_sha256||"").slice(0,12));
+   if(!response.ok)throw Error(info.path+" returned HTTP "+response.status);
+   const payload=await response.json();
+   if(payload.schema!==1||payload.inventory!=="Breivik"||payload.scenario!=="Default"||payload.pollutant!==code||payload.units!=="tonnes/year"||!Array.isArray(payload.records))throw Error("Invalid Breivik file: "+code);
+   rows=payload.records.map((item,index)=>{
+    if(!Array.isArray(item)||item.length!==5)throw Error("Invalid Breivik row "+index);
+    const [country,iso,year,sector,emissions]=item;
+    if(typeof country!=="string"||typeof iso!=="string"||!Number.isInteger(year)||year<1930||year>2100||sector!==BREIVIK_SECTOR||!Number.isFinite(emissions)||emissions<0)throw Error("Invalid Breivik value "+index);
+    return {country,iso,year,sector,emissions,pollutant:breivikLabel(code),inventory:"Breivik",region:S.regionLookup[iso]||"Unclassified"};
+   });
+   if(!rows.length)throw Error("Empty Breivik data file: "+code);
+   S.breivikCache.set(code,rows);
+  }
+  if(serial!==S.loadSerial||S.mapInventory!=="Breivik")return;
+  S.records=[...S.records.filter(r=>r.inventory!=="Breivik"),...rows];
+  S.demo=false;S.country=null;S.scaleCache=null;S.loadingPollutant=null;S.activePollutant=breivikLabel(code);
+  options();render();
+ }catch(e){
+  if(serial!==S.loadSerial)return;
+  S.loadingPollutant=null;S.sectorLoadError="Breivik observations unavailable: "+e.message;
+  $("mapCount").textContent=S.sectorLoadError;console.error(S.sectorLoadError,e);
+ }
+}
 })();
