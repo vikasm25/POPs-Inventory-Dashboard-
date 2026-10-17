@@ -28,3 +28,5 @@
 .insight strong.insight-text{font-size:16px;white-space:normal}
 @media(max-width:850px){.map-frame{height:clamp(300px,52vw,480px)}}
 @media(max-width:650px){.map-frame{grid-template-columns:58px minmax(0,1fr);height:300px}.map-legend{width:58px;padding:8px 3px}.legend-title,.legend-number{font-size:8px}.legend-empty{font-size:7px}.map-zoom{right:7px;top:7px}.country-card{left:66px;max-width:60%}.donut-item{font-size:10px}.insight{padding:12px}.insight strong{font-size:20px}}
+
+.ranking-panel .rank-list{flex:1;justify-content:space-evenly;gap:10px}.ranking-panel .rank-row{min-height:39px}.ranking-panel .rank-separator{margin:12px 0}.ranking-panel .rank-note{margin-top:12px}
