@@ -213,3 +213,52 @@ button,.tab,.choice-row{touch-action:manipulation}
  .controls-panel{margin-top:0}
  .map-toolbar{padding:0 5px}
 }
+
+
+/* Selection toolbar: prevent unnecessary wrapping without reducing text size. */
+.filter-strip.inventory-filters{display:grid;grid-template-columns:minmax(180px,240px) minmax(245px,380px) auto;max-width:none;gap:16px;align-items:end;justify-content:start}
+.filter-strip.inventory-filters .filter-field{min-width:0}
+.filter-strip.inventory-filters .filter-field>label{font-size:13px;font-weight:700;white-space:nowrap;display:block;margin-bottom:9px}
+.filter-strip.inventory-filters .select-wrap select{font-size:14px;height:48px;min-width:0;white-space:nowrap;text-overflow:ellipsis}
+.filter-action{align-self:end}
+.export-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:48px;padding:0 20px;font-size:14px;font-weight:700;white-space:nowrap}
+.filter-strip.inventory-filters .chevron{pointer-events:none}
+.controls-panel .selection-cards{grid-template-columns:minmax(0,1fr)!important}
+.controls-panel .selector-heading{flex-wrap:nowrap;gap:10px}
+.controls-panel .selector-heading h3{white-space:nowrap;font-size:16px}
+.controls-panel .selector-actions{flex-shrink:0}
+.controls-panel .selector-note{font-size:12px;line-height:1.4}
+.controls-panel .choice-row{font-size:14px;line-height:1.35;overflow-wrap:normal;word-break:normal;gap:10px}
+.controls-panel .choice-list{max-height:none;overflow:visible}
+.controls-panel .selected-location strong{font-variant-numeric:tabular-nums}
+.panel-heading h2{overflow-wrap:normal;word-break:normal}
+.panel-heading>div:first-child{min-width:0}
+.panel-heading>div:first-child>div{min-width:0}
+#mapSubtitle,#trendSubtitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.map-legend .legend-number{overflow-wrap:normal!important;word-break:normal!important;font-variant-numeric:tabular-nums;font-size:9px!important}
+.map-legend .legend-title{word-break:normal!important;overflow-wrap:normal!important}
+@media(min-width:1001px){.top-grid{grid-template-columns:minmax(0,1fr) minmax(300px,350px)!important}.controls-panel .choice-row{font-size:13px}.controls-panel .selected-location strong{font-size:clamp(26px,2.4vw,34px)}}
+@media(min-width:701px) and (max-width:1000px){.filter-strip.inventory-filters{grid-template-columns:minmax(160px,220px) minmax(220px,1fr) auto}.controls-panel .choice-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px}.controls-panel .choice-row{font-size:13px}}
+@media(max-width:700px){
+ .filter-strip.inventory-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end}
+ .filter-strip.inventory-filters .filter-field>label{font-size:14px;margin-bottom:7px}
+ .filter-strip.inventory-filters .select-wrap select{font-size:16px;height:52px;padding-left:12px}
+ .filter-action{grid-column:1/-1}
+ .export-btn{width:100%;height:48px;font-size:15px}
+ .controls-panel .selector-heading h3{font-size:17px}
+ .controls-panel .choice-row{font-size:15px;min-height:46px;white-space:normal}
+ .controls-panel .choice-list{max-height:none}
+ .map-panel .panel-heading{align-items:flex-start}
+ .map-panel .panel-heading h2{font-size:18px}
+ .map-panel #mapSubtitle{font-size:12px}
+ .map-legend .legend-title{font-size:8px!important}
+ .map-legend .legend-number{font-size:8px!important}
+ .map-legend .legend-empty{font-size:8px!important}
+ .panel-heading h2{font-size:18px}
+}
+@media(max-width:380px){
+ .filter-strip.inventory-filters{grid-template-columns:minmax(0,1fr)}
+ .filter-action{grid-column:auto}
+ .filter-strip.inventory-filters .select-wrap select{height:50px}
+ .map-panel #mapSubtitle{max-width:210px}
+}
