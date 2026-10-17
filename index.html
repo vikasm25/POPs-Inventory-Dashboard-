@@ -1,89 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#071222" />
-  <meta name="description" content="Interactive global persistent organic pollutant emission inventory explorer." />
-  <title>POPs Atlas | Emission Inventory Explorer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
-  <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-  <script defer src="./app.js"></script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Explore country-level persistent organic pollutant emissions by inventory, sector, pollutant and year."/>
+<meta name="theme-color" content="#081727"/>
+<title>POPs Atlas — Global Emissions Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./styles.css"/>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
+<script src="./app.js" defer></script>
 </head>
 <body>
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand"><div class="brand-mark">◈</div><div><strong>POPs ATLAS</strong><small>INVENTORY EXPLORER</small></div></div>
-    <div class="side-label">WORKSPACE</div>
-    <a class="nav active" href="#overview"><span>▦</span> Global overview</a>
-    <a class="nav" href="#country-section"><span>◎</span> Country explorer</a>
-    <a class="nav" href="#sources-section"><span>≋</span> Source comparison</a>
-    <a class="nav" href="#data-section"><span>⇧</span> Data workspace</a>
-    <div class="sidebar-bottom"><span class="live-dot"></span> Research workspace <small>Local-first • No account required</small></div>
-  </aside>
-  <main class="main" id="overview">
-    <header class="topbar"><div class="breadcrumb">Research / <b>Global emissions</b></div><div class="top-right"><span class="mini-pill">● INDEPENDENT INVENTORIES</span><span class="avatar">PA</span></div></header>
-    <section class="page-title">
-      <div><p class="eyebrow">GLOBAL EMISSIONS INTELLIGENCE</p><h1>Persistent organic<br/><span>pollutant emissions.</span></h1><p class="subheading">Explore emissions geographically, compare inventories, and trace historical change—without mixing incompatible sources.</p></div>
-      <div class="title-actions"><button id="exportBtn" class="btn secondary">↓ Export selection</button><a class="btn primary" href="#data-section">＋ Import inventory</a></div>
-    </section>
-    <section class="filters" aria-label="Inventory filters">
-      <div class="filter"><label for="pollutant">Pollutant</label><select id="pollutant"><option>PCB-28</option></select></div>
-      <div class="filter"><label for="source">Inventory source</label><select id="source"><option>EDGAR</option><option>Breivik</option><option>Other</option></select></div>
-      <div class="filter year-filter"><div class="year-header"><label for="yearSlider">Reference year</label><strong id="yearValue">2024</strong></div><input type="range" min="2000" max="2024" value="2024" id="yearSlider"/><div class="slider-labels"><span id="minYear">2000</span><span>Drag to explore time</span><span id="maxYear">2024</span></div></div>
-      <button class="play-btn" id="playBtn" aria-label="Animate years" title="Animate years">▶</button>
-    </section>
-    <section class="stats">
-      <article class="stat"><div class="stat-top">Global emissions <span>↗</span></div><div class="stat-number" id="globalTotal">—</div><div class="stat-bottom">tonnes / year <span id="globalTag">Awaiting data</span></div></article>
-      <article class="stat"><div class="stat-top">Reporting countries <span>◎</span></div><div class="stat-number" id="countryCount">—</div><div class="stat-bottom">with non-missing observations <span>GLOBAL</span></div></article>
-      <article class="stat"><div class="stat-top">Selected inventory <span>◈</span></div><div class="stat-number stat-word" id="selectedSource">EDGAR</div><div class="stat-bottom">one source at a time <span>NO DOUBLE COUNT</span></div></article>
-      <article class="stat"><div class="stat-top">Time coverage <span>◷</span></div><div class="stat-number stat-word" id="yearCoverage">—</div><div class="stat-bottom" id="coverageLabel">Import data to begin</div></article>
-    </section>
-    <section class="content-grid" id="country-section">
-      <article class="panel map-panel">
-        <div class="panel-head"><div><p class="section-kicker">SPATIAL DISTRIBUTION</p><h2>World emissions map</h2></div><div class="panel-actions"><span class="subtle-dot"></span><span id="mapStatus">Loading map</span></div></div>
-        <div class="map-search"><label class="searchbox">⌕ <input id="countrySearch" aria-label="Search for country" placeholder="Find a country..." autocomplete="off"/></label><button class="icon-button" id="resetMap" title="Reset selection">↺</button></div>
-        <div class="map-container"><svg id="worldMap" viewBox="0 0 1000 510" role="img" aria-label="Interactive world country map"></svg><div id="mapTooltip" class="tooltip" role="status"></div></div>
-        <div class="map-bottom"><div class="legend"><span>Lower</span><div class="gradient"></div><span>Higher</span><span class="legend-unit">t/year · log scale</span></div><span class="map-foot">Select any mapped country for details</span></div>
-        <div class="boundary-note" id="boundaryNote"><b>◈ India boundary safeguard</b><span>Survey of India outline required; affected map area is withheld until loaded.</span><a href="https://surveyofindia.gov.in/pages/outline-maps-of-india" target="_blank" rel="noopener noreferrer">Get official boundary ↗</a></div>
-      </article>
-      <article class="panel detail-panel">
-        <div class="panel-head"><div><p class="section-kicker">COUNTRY INTELLIGENCE</p><h2 id="countryTitle">Country profile</h2></div><span class="country-icon">◉</span></div>
-        <div class="country-hero"><div class="small-label">ANNUAL EMISSIONS</div><div class="country-value" id="countryValue">—</div><div class="country-unit">tonnes per year <span id="countryYear">2024</span></div></div>
-        <div class="divider-line"></div>
-        <div class="metric-row"><span>Inventory</span><b id="countrySource">EDGAR</b></div>
-        <div class="metric-row"><span>Pollutant</span><b id="countryPollutant">PCB-28</b></div>
-        <div class="metric-row"><span>Global contribution</span><b id="countryShare">—</b></div>
-        <div class="metric-row"><span>Global ranking</span><b id="countryRank">—</b></div>
-        <div class="mini-heading">HISTORICAL TREND</div><div id="miniTrend" class="mini-trend"><div class="empty-mini">Select a country and import data</div></div>
-        <p class="detail-foot" id="countryNotice">Click a country on the map to inspect its emissions over time.</p>
-      </article>
-    </section>
-    <section class="lower-grid" id="sources-section">
-      <article class="panel trend-panel"><div class="panel-head"><div><p class="section-kicker">TEMPORAL ANALYSIS</p><h2>Emission trajectory</h2></div><span class="panel-tag" id="trendTitle">Global · EDGAR</span></div><div id="trendChart" class="chart-area"><div class="empty-state"><b>No emissions data loaded</b><span>Import a validated inventory to see the timeline.</span></div></div></article>
-      <article class="panel sources-panel"><div class="panel-head"><div><p class="section-kicker">INVENTORY BENCHMARK</p><h2>Compare sources</h2></div><span class="panel-tag">Same pollutant · same year</span></div><div id="sourceBars" class="source-bars"><div class="empty-state"><b>Sources not loaded yet</b><span>EDGAR, Breivik and custom inventories appear here.</span></div></div><div class="source-disclaimer">Inventories may differ by coverage, methodology and chemical definition. Values are never added across sources.</div></article>
-    </section>
-    <section class="lower-grid data-grid" id="data-section">
-      <article class="panel data-panel"><div class="panel-head"><div><p class="section-kicker">DATA WORKSPACE</p><h2>Connect your inventories</h2></div><span class="panel-tag" id="dataCount">0 observations</span></div>
-        <p class="data-explain">Import country-level annual CSV data from EDGAR, Breivik or other studies. All processing stays in your browser. A source and a pollutant must be identified for every record.</p>
-        <label class="dropzone" id="dropzone" for="csvFile"><strong>⇧</strong><b>Drop CSV files here or browse</b><span>Multiple files supported · country / year / pollutant / source</span><input type="file" id="csvFile" accept=".csv,text/csv" multiple hidden/></label>
-        <div id="importMessage" class="import-message" aria-live="polite"></div>
-        <div class="data-actions"><a href="./data/inventory-template.csv" download>↓ Download CSV template</a><button id="clearData" class="link-danger">Clear imported data</button></div>
-      </article>
-      <article class="panel trust-panel"><div class="panel-head"><div><p class="section-kicker">CARTOGRAPHIC INTEGRITY</p><h2>Official India boundary</h2></div><span class="panel-tag">SoI · 1:16M</span></div>
-        <p class="data-explain">A generic world atlas must not be presented as an authoritative India boundary. Load GeoJSON converted from the Survey of India official outline dataset. Until then, the region is masked.</p>
-        <label class="upload-boundary" for="boundaryFile">＋ Load Survey of India GeoJSON <input id="boundaryFile" type="file" accept=".geojson,.json,application/geo+json" hidden/></label>
-        <div id="boundaryStatus" class="boundary-status">● Awaiting official vector outline</div>
-        <a class="source-link" href="https://surveyofindia.gov.in/pages/outline-maps-of-india" target="_blank" rel="noopener noreferrer">Survey of India official outline downloads ↗</a>
-        <p class="tiny-note">The dashboard does not certify the boundary. Verify data provenance and Survey of India licensing before publication.</p>
-      </article>
-    </section>
-    <footer><span>POPs Atlas / Research prototype</span><span>Data provenance first. No fictional emissions.</span></footer>
-  </main>
+<div class="app-shell">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M25.4 5.3C12.8 4 5.6 9.8 5.8 19c.2 7.3 9 9.9 13.3 5.8 4-3.9 3.4-9.5 6.3-19.5Z" fill="currentColor" opacity=".92"/><path d="M5.2 27.4c5.3-8.5 10.1-12.8 17.1-16.2" stroke="#08251a" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+    <div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div>
+  </div>
+  <div class="top-actions">
+    <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
+    <a class="top-link" href="#methodology">Methodology</a>
+    <button id="themeToggle" class="top-icon" type="button" aria-label="Switch to light theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
+    <button class="top-icon" type="button" id="dataButton" title="Import data" aria-label="Open data workspace"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V3m0 0L8 7m4-4 4 4M4 16v4h16v-4"/></svg></button>
+  </div>
+</header>
+<main class="dashboard">
+  <section class="intro">
+    <div><p class="eyebrow">ANALYTICS / GLOBAL OVERVIEW</p><h1>POPs Emissions <span>Dashboard</span></h1><p>Investigate persistent organic pollutant emissions across countries, inventories and economic sectors.</p></div>
+    <div class="intro-aside"><button type="button" id="demoToggle" class="outline-btn">Exit demo</button><button type="button" id="exportButton" class="outline-btn">↓ Export data</button></div>
+  </section>
+  <div id="statusBanner" class="status-banner demo"><span class="status-dot"></span><span id="statusText">DEMONSTRATION — illustrative figures only. No published inventory data have been loaded.</span><button type="button" id="statusDismiss" aria-label="Dismiss notice">×</button></div>
+
+  <section class="filter-strip" aria-label="Emission data filters">
+    <div class="filter-field"><label for="pollutantSelect">Pollutant</label><div class="select-wrap"><select id="pollutantSelect"><option>PCB (illustrative)</option></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+    <div class="filter-field"><label id="inventoryLabel">Inventory <span class="muted-label">· multi-select</span></label>
+      <div class="multi" id="inventoryMulti">
+        <button class="multi-trigger" type="button" id="inventoryTrigger" aria-haspopup="true" aria-expanded="false" aria-labelledby="inventoryLabel inventorySummary"><span id="inventorySummary">Select inventories</span><span class="chevron">⌄</span></button>
+        <div class="multi-menu" id="inventoryMenu" hidden><div class="menu-heading">INVENTORIES</div><div class="multi-options" id="inventoryOptions"></div><div class="menu-foot"><button type="button" data-kind="inventory" data-action="all">Select all</button><button type="button" data-kind="inventory" data-action="none">Clear</button></div></div>
+      </div>
+    </div>
+    <div class="filter-field"><label id="sectorLabel">Emission source <span class="muted-label">· multi-select</span></label>
+      <div class="multi" id="sectorMulti">
+        <button class="multi-trigger" type="button" id="sectorTrigger" aria-haspopup="true" aria-expanded="false" aria-labelledby="sectorLabel sectorSummary"><span id="sectorSummary">All source categories</span><span class="chevron">⌄</span></button>
+        <div class="multi-menu" id="sectorMenu" hidden><div class="menu-heading">EMISSION SOURCE CATEGORIES</div><div class="multi-options" id="sectorOptions"></div><div class="menu-foot"><button type="button" data-kind="sector" data-action="all">Select all</button><button type="button" data-kind="sector" data-action="none">Clear</button></div></div>
+      </div>
+    </div>
+    <div class="filter-field layer-field"><label for="mapInventory">Map inventory</label><div class="select-wrap"><select id="mapInventory"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+  </section>
+
+  <section class="top-grid">
+    <article class="panel map-panel" id="map-section">
+      <div class="panel-heading"><div><span class="section-icon map-icon">◎</span><div><h2>Global Emissions</h2><p id="mapSubtitle">Country-level emissions · tonnes/year</p></div></div><div class="panel-tools"><button type="button" id="resetCountry" class="icon-btn" title="Reset country" aria-label="Reset country selection">↺</button><span id="mapYearBadge" class="year-badge">2020</span></div></div>
+      <div class="map-frame">
+        <div class="map-legend"><span class="legend-title">EMISSION INTENSITY</span><div class="legend-scale"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="legend-markers"><span>High</span><span>Low</span></div><div class="legend-empty"><b></b>No observations</div></div>
+        <svg id="worldMap" viewBox="0 0 1000 465" role="img" aria-label="Interactive global country emissions map"></svg>
+        <div class="map-zoom" aria-label="Map zoom"><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset map zoom">⌖</button></div>
+        <div id="mapTooltip" class="map-tooltip" role="status"></div>
+        <div id="countryCard" class="country-card" hidden><button type="button" id="closeCountry" aria-label="Close country">×</button><small>SELECTED COUNTRY</small><b id="countryName">—</b><strong id="countryEmission">—</strong><span id="countryDetail">tonnes per year</span></div>
+      </div>
+      <div class="map-toolbar"><div class="map-tabs"><button id="mapTab" type="button" class="tab active">◉ &nbsp; Map</button><button id="tableTab" type="button" class="tab">▦ &nbsp; Table</button></div><div class="map-message" id="mapCount">Select any country to explore</div></div>
+      <div class="map-table-wrap" id="tableWrap" hidden><div class="table-scroll"><table><thead><tr><th>Country</th><th>ISO3</th><th>Emissions (t/year)</th></tr></thead><tbody id="tableBody"></tbody></table></div></div>
+      <div class="year-control"><div class="year-top"><label for="yearSlider"><span class="timeline-icon">◷</span> Time explorer</label><strong id="yearNumber">2020</strong></div><div class="year-bar"><span id="yearMin">1990</span><input type="range" id="yearSlider" value="2020" min="1990" max="2024" step="1" aria-label="Select year"/><span id="yearMax">2024</span><button type="button" class="play-button" id="playButton" aria-label="Play timeline">▶</button></div></div>
+      <div id="boundaryNotice" class="boundary-notice"><span>ⓘ</span> India-region border detail withheld pending verified Survey of India outline. <a href="https://surveyofindia.gov.in/pages/outline-maps-of-india" target="_blank" rel="noopener noreferrer">Official vector ↗</a></div>
+    </article>
+
+    <article class="panel ranking-panel">
+      <div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Country Rankings</h2><p>Highest & lowest emitting countries</p></div></div><span class="tiny-pill">TOP 3 EACH</span></div>
+      <div class="ranking-caption"><span>Highest emissions</span><span id="rankingUnits">t/year · 2020</span></div>
+      <div class="rank-list" id="rankTop"></div><div class="rank-separator"></div>
+      <div class="ranking-caption low"><span>Lowest emissions</span><span>non-missing observations</span></div>
+      <div class="rank-list" id="rankLow"></div>
+      <div class="rank-note">Countries without observations are excluded from rankings. Zero is an observation, not missing data.</div>
+    </article>
+  </section>
+
+  <section class="mid-grid">
+    <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-icon">⌁</span><div><h2>Emissions Over Time</h2><p id="trendSubtitle">Sector-specific trajectories for the selected inventory</p></div></div><span class="tiny-pill" id="trendScope">GLOBAL</span></div><div class="trend-legend" id="trendLegend"></div><div class="plot-wrap" id="trendPlot"></div></article>
+    <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Key Statistics</h2><p>Selected inventory · selected year</p></div></div></div><div class="kpi-grid">
+      <div class="kpi"><small>Global emissions</small><strong id="kpiTotal">—</strong><span>tonnes per year</span></div>
+      <div class="kpi"><small>Year-on-year change</small><strong id="kpiChange">—</strong><span>vs. previous reported year</span></div>
+      <div class="kpi"><small>Reporting countries</small><strong id="kpiCountries">—</strong><span>with inventory observations</span></div>
+      <div class="kpi"><small>Largest emitting country</small><strong class="kpi-word" id="kpiCountry">—</strong><span id="kpiShare">share of reported total</span></div>
+    </div></article>
+  </section>
+
+  <section class="bottom-grid">
+    <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · selected year</p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
+    <article class="panel"><div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Regional Distribution</h2><p>Reported emissions by geographic region</p></div></div></div><div id="regionalChart" class="regional-slot"></div></article>
+    <article class="panel"><div class="panel-heading"><div><span class="section-icon">⇄</span><div><h2>Inventory Comparison</h2><p>Same pollutant, year, and source selection</p></div></div></div><div id="inventoryCompare" class="compare-slot"></div><p class="panel-footnote">Inventories are independent estimates and are never summed together.</p></article>
+    <article class="panel" id="methodology"><div class="panel-heading"><div><span class="section-icon">▧</span><div><h2>Coverage & Data Workspace</h2><p>Traceable inputs · no automatic interpolation</p></div></div><span id="coverageBadge" class="tiny-pill">DEMO</span></div>
+      <div class="coverage-grid"><div><span>Available years</span><b id="coverageYears">—</b></div><div><span>Loaded records</span><b id="coverageRows">0</b></div></div>
+      <label class="upload-zone" for="csvUpload"><span>⇧</span><strong>Import inventory CSV</strong><small>Country / year / pollutant / inventory / emission source</small><input type="file" id="csvUpload" accept=".csv,text/csv" multiple hidden/></label>
+      <div class="data-links"><a href="./data/inventory-template.csv" download>Download CSV template ↗</a><button type="button" id="clearImports">Clear imports</button></div>
+      <div id="uploadMessage" class="upload-message" role="status"></div>
+      <div class="boundary-upload"><label for="boundaryUpload">＋ Load Survey of India GeoJSON<input type="file" id="boundaryUpload" accept=".geojson,.json" hidden/></label><span id="boundaryStatus">Official India outline not loaded</span></div>
+    </article>
+  </section>
+  <footer><span>POPs Atlas • A research visualization workspace</span><span>EDGAR and Breivik are inventories · Emission sources are economic sectors</span></footer>
+</main>
 </div>
-<script>window.addEventListener("error",function(e){if(e.target&&e.target.tagName==="SCRIPT")console.warn("Failed to load a required script",e.target.src)},true)</script>
 </body>
 </html>
