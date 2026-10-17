@@ -22,15 +22,15 @@
   </div>
   <div class="top-actions">
     <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
-    <a class="top-link" href="#methodology">Methodology</a>
+    <a class="top-link" href="https://edgar.jrc.ec.europa.eu/dataset_pop81" target="_blank" rel="noopener">EDGAR source</a>
     <button id="themeToggle" class="top-icon" type="button" aria-label="Switch to light theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
-    <button class="top-icon" type="button" id="dataButton" title="Import data" aria-label="Open data workspace"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V3m0 0L8 7m4-4 4 4M4 16v4h16v-4"/></svg></button>
+    <button class="top-icon" type="button" id="dataButton" title="Export emissions data" aria-label="Export emissions data"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V3m0 0L8 7m4-4 4 4M4 16v4h16v-4"/></svg></button>
   </div>
 </header>
 <main class="dashboard">
   <section class="intro">
     <div><p class="eyebrow">ANALYTICS / GLOBAL OVERVIEW</p><h1>POPs Emissions <span>Dashboard</span></h1><p>Investigate persistent organic pollutant emissions across countries, inventories and economic sectors.</p></div>
-    <div class="intro-aside"><button type="button" id="demoToggle" class="outline-btn">Exit demo</button><button type="button" id="exportButton" class="outline-btn">↓ Export data</button></div>
+    <div class="intro-aside"><button type="button" id="demoToggle" hidden></button><button type="button" id="exportButton" class="outline-btn">↓ Export data</button></div>
   </section>
   <div id="statusBanner" class="status-banner demo"><span class="status-dot"></span><span id="statusText">DEMONSTRATION — illustrative figures only. No published inventory data have been loaded.</span><button type="button" id="statusDismiss" aria-label="Dismiss notice">×</button></div>
 
@@ -55,8 +55,8 @@
     <article class="panel map-panel" id="map-section">
       <div class="panel-heading"><div><span class="section-icon map-icon">◎</span><div><h2>Global Emissions</h2><p id="mapSubtitle">Country-level emissions · tonnes/year</p></div></div><div class="panel-tools"><button type="button" id="resetCountry" class="icon-btn" title="Reset country" aria-label="Reset country selection">↺</button><span id="mapYearBadge" class="year-badge">2020</span></div></div>
       <div class="map-frame">
-        <div class="map-legend"><span class="legend-title">EMISSION INTENSITY</span><div class="legend-scale"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="legend-markers"><span>High</span><span>Low</span></div><div class="legend-empty"><b></b>No observations</div></div>
-        <svg id="worldMap" viewBox="0 0 1000 465" role="img" aria-label="Interactive global country emissions map"></svg>
+        <aside class="map-legend" aria-label="Emissions color scale"><span class="legend-title">EMISSIONS<br/>t/year</span><span class="legend-number" id="legendMax">—</span><div class="legend-scale" id="legendScale"></div><span class="legend-number" id="legendMid">—</span><span class="legend-number" id="legendMin">0</span><div class="legend-empty"><b></b>No data</div><div class="legend-empty"><b class="zero-swatch"></b>Zero</div></aside>
+        <div class="map-viewport"><svg id="worldMap" viewBox="0 0 1000 465" role="img" aria-label="Interactive global country emissions map, drag to pan"></svg></div>
         <div class="map-zoom" aria-label="Map zoom"><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset map zoom">⌖</button></div>
         <div id="mapTooltip" class="map-tooltip" role="status"></div>
         <div id="countryCard" class="country-card" hidden><button type="button" id="closeCountry" aria-label="Close country">×</button><small>SELECTED COUNTRY</small><b id="countryName">—</b><strong id="countryEmission">—</strong><span id="countryDetail">tonnes per year</span></div>
@@ -91,14 +91,9 @@
     <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · selected year</p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
     <article class="panel"><div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Regional Distribution</h2><p>Reported emissions by geographic region</p></div></div></div><div id="regionalChart" class="regional-slot"></div></article>
     <article class="panel"><div class="panel-heading"><div><span class="section-icon">⇄</span><div><h2>Inventory Comparison</h2><p>Same pollutant, year, and source selection</p></div></div></div><div id="inventoryCompare" class="compare-slot"></div><p class="panel-footnote">Inventories are independent estimates and are never summed together.</p></article>
-    <article class="panel" id="methodology"><div class="panel-heading"><div><span class="section-icon">▧</span><div><h2>Coverage & Data Workspace</h2><p>Traceable inputs · no automatic interpolation</p></div></div><span id="coverageBadge" class="tiny-pill">DEMO</span></div>
-      <div class="coverage-grid"><div><span>Available years</span><b id="coverageYears">—</b></div><div><span>Loaded records</span><b id="coverageRows">0</b></div></div>
-      <label class="upload-zone" for="csvUpload"><span>⇧</span><strong>Import inventory CSV</strong><small>Country / year / pollutant / inventory / emission source</small><input type="file" id="csvUpload" accept=".csv,text/csv" multiple hidden/></label>
-      <div class="data-links"><a href="./data/inventory-template.csv" download>Download CSV template ↗</a><button type="button" id="clearImports">Clear imports</button></div>
-      <div id="uploadMessage" class="upload-message" role="status"></div>
-      <div class="boundary-upload" hidden><label for="boundaryUpload">＋ Load GeoJSON<input type="file" id="boundaryUpload" accept=".geojson,.json" hidden/></label><span id="boundaryStatus"></span></div>
-    </article>
+    <article class="panel insights-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Emissions Insights</h2><p>Concentration, sector dominance and long-term change</p></div></div></div><div class="insights-grid"><div class="insight"><small>Top 3 countries' share</small><strong id="insightTop3">—</strong><span>of reported global emissions</span></div><div class="insight"><small>Largest source category</small><strong class="insight-text" id="insightSector">—</strong><span id="insightSectorShare">—</span></div><div class="insight"><small>Change since first reported year</small><strong id="insightLongChange">—</strong><span id="insightPeriod">—</span></div><div class="insight"><small>Countries reporting positive emissions</small><strong id="insightPositive">—</strong><span>excludes reported zero values</span></div></div></article>
   </section>
+  <div hidden id="methodology"><span id="coverageBadge"></span><span id="coverageYears"></span><span id="coverageRows"></span><span id="uploadMessage" role="status"></span><span id="boundaryStatus"></span><input id="csvUpload" type="file" accept=".csv" multiple/><input id="boundaryUpload" type="file" accept=".geojson,.json"/><button id="clearImports" type="button"></button></div>
   <footer><span>POPs Atlas • A research visualization workspace</span><span>EDGAR and Breivik are inventories · Emission sources are economic sectors</span></footer>
 </main>
 </div>
