@@ -89,8 +89,7 @@
     </article>
   </section>
 
-  <section class="mid-grid">
-    <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-icon">⌁</span><div><h2>Emissions Over Time</h2><p id="trendSubtitle">Sector-specific trajectories for the selected inventory</p></div></div><span class="tiny-pill" id="trendScope">GLOBAL</span></div><div class="trend-legend" id="trendLegend"></div><div class="plot-wrap" id="trendPlot"></div></article>
+  <section class="stats-strip" aria-label="Global statistics">
     <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Global Statistics</h2><p>Selected inventory · <span data-current-year>2024</span></p></div></div></div><div class="kpi-grid">
       <div class="kpi"><small>Median emitting country</small><strong id="kpiMedian">—</strong><span>tonnes/year · positive values</span></div>
       <div class="kpi"><small>Year-on-year change</small><strong id="kpiChange">—</strong><span>vs. previous reported year</span></div>
@@ -100,11 +99,12 @@
   </section>
 
   <section class="bottom-grid" aria-label="Emissions analytics">
-    <div class="analytics-column">
-      <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · <span data-current-year>2024</span></p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
+    <div class="analytics-column analytics-primary">
+      <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-icon">⌁</span><div><h2>Emissions Over Time</h2><p id="trendSubtitle">Sector-specific trajectories for the selected inventory</p></div></div><span class="tiny-pill" id="trendScope">GLOBAL</span></div><div class="trend-legend" id="trendLegend"></div><div class="plot-wrap" id="trendPlot"></div></article>
       <article class="panel insights-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Emissions Insights</h2><p>Concentration, sector dominance and long-term change</p></div></div></div><div class="insights-grid"><div class="insight"><small>Top 3 countries' share</small><strong id="insightTop3">—</strong><span>of reported global emissions</span></div><div class="insight"><small>Largest source category</small><strong class="insight-text" id="insightSector">—</strong><span id="insightSectorShare">—</span></div><div class="insight"><small>Change since first reported year</small><strong id="insightLongChange">—</strong><span id="insightPeriod">—</span></div><div class="insight"><small>Countries reporting positive emissions</small><strong id="insightPositive">—</strong><span>excludes reported zero values</span></div></div></article>
     </div>
-    <div class="analytics-column">
+    <div class="analytics-column analytics-secondary">
+      <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · <span data-current-year>2024</span></p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
       <article class="panel"><div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Regional Distribution</h2><p>Reported emissions by geographic region</p></div></div></div><div id="regionalChart" class="regional-slot"></div></article>
       <article class="panel top-polluters-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Top Polluters</h2><p>Seven highest-emitting countries · <span data-current-year>2024</span></p></div></div></div><div id="topPolluters" class="top-polluters-list"></div><p class="panel-footnote">Only countries and territories are ranked; international shipping is excluded. Shares use all reported global emissions.</p></article>
     </div>
