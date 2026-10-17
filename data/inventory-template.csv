@@ -1,1 +1,1 @@
-country,iso3,year,pollutant,source,emissions_tonnes_per_year,unit
+country,iso3,region,year,pollutant,inventory,emission_source,emissions_tonnes_per_year,unit
