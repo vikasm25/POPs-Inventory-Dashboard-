@@ -7,6 +7,7 @@ const dist=join(projectRoot,"dist");
 const required=[
   "index.html",
   "how-to-use.html",
+  "about.html",
   "references.html",
   "pages.js",
   "styles.css",
@@ -22,7 +23,7 @@ for(const filename of required){
 rmSync(dist,{recursive:true,force:true});
 mkdirSync(join(dist,"data","edgar"),{recursive:true});
 mkdirSync(join(dist,"data","boundaries"),{recursive:true});
-for(const filename of ["index.html","how-to-use.html","references.html","pages.js","styles.css","app.js"]){
+for(const filename of ["index.html","how-to-use.html","about.html","references.html","pages.js","styles.css","app.js"]){
   copyFileSync(join(projectRoot,filename),join(dist,filename));
 }
 copyFileSync(join(projectRoot,"data","country-regions.json"),join(dist,"data","country-regions.json"));
