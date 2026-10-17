@@ -174,3 +174,42 @@ button,.tab,.choice-row{touch-action:manipulation}
  .map-frame{height:245px}
  .kpi-grid{grid-template-columns:1fr}
 }
+
+/* Map-first visual refresh — compact legend, more room, generous separation. */
+@media(min-width:1001px){
+ .top-grid{display:grid!important;grid-template-columns:minmax(0,1fr) 330px!important;gap:24px!important;align-items:start}
+ .top-grid>.map-panel{min-width:0}
+ .top-grid>.controls-panel{min-width:0;align-self:start}
+ .map-frame{grid-template-columns:47px minmax(0,1fr)!important;height:clamp(440px,38vw,620px)!important;border-radius:16px}
+ .map-legend{width:47px!important;padding:13px 3px!important}
+ .map-legend .legend-title{font-size:9px!important;letter-spacing:0;line-height:1.2}
+ .map-legend .legend-number{font-size:10px!important;white-space:normal;overflow-wrap:anywhere}
+ .map-legend .legend-empty{font-size:9px!important;flex-wrap:wrap;white-space:normal}
+ .legend-scale{width:15px!important}
+ .map-panel{padding:20px!important}
+ .controls-panel{gap:15px!important}
+ .selection-cards{grid-template-columns:1fr!important}
+ .choice-list{max-height:210px}
+ .selected-location{padding:17px!important}
+ .selected-location strong{font-size:32px}
+ .panel{box-shadow:0 3px 16px #0000000a}
+}
+@media(min-width:701px) and (max-width:1000px){
+ .top-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:18px!important}
+ .map-frame{grid-template-columns:45px minmax(0,1fr)!important;height:clamp(380px,49vw,530px)!important}
+ .map-legend{width:45px!important;padding:10px 3px!important}
+ .selection-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+ .top-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:17px!important}
+ .map-panel{padding:15px 10px!important}
+ .map-frame{grid-template-columns:34px minmax(0,1fr)!important;height:clamp(300px,85vw,445px)!important;border-radius:12px}
+ .map-legend{width:34px!important;padding:9px 1px!important}
+ .map-legend .legend-title{font-size:9px!important;letter-spacing:0;overflow-wrap:anywhere}
+ .map-legend .legend-number{font-size:9px!important;white-space:normal;overflow-wrap:anywhere}
+ .map-legend .legend-empty{font-size:8px!important;flex-wrap:wrap;white-space:normal}
+ .legend-scale{width:13px!important}
+ .map-zoom{right:8px;top:8px}
+ .controls-panel{margin-top:0}
+ .map-toolbar{padding:0 5px}
+}
