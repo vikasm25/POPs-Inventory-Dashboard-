@@ -17,7 +17,7 @@ import math
 from pathlib import Path
 import requests
 from shapely.geometry import GeometryCollection, MultiPolygon, Polygon, mapping, shape
-from shapely.validation import explain_validity
+from shapely.validation import explain_validity, make_valid
 
 WORLD_URL = "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
 MAX_WORLD_BYTES = 8 * 1024 * 1024
@@ -98,7 +98,7 @@ def build(world, india_geo):
     if abs(simplified.area / india.area - 1) > 0.00015:
         raise ValueError("India simplification changed polygon area too much")
 
-    results, countries_clipped = [], []
+    results, countries_clipped, repaired_countries = [], [], []
     for f in world["features"]:
         name = str(f.get("properties", {}).get("name", ""))
         iso = str(f.get("id", "")).upper()
@@ -107,7 +107,15 @@ def build(world, india_geo):
             continue
         geom = shape(f["geometry"])
         if not geom.is_valid:
-            raise ValueError(f"Invalid geometry for basemap country: {name}")
+            # Natural Earth-derived world GeoJSON can contain self-intersections,
+            # notably Antarctica. Repair these instead of dropping the country.
+            repaired = polygons_only(make_valid(geom))
+            if repaired is None or repaired.is_empty or not repaired.is_valid:
+                raise ValueError(f"Unable to repair basemap country: {name}")
+            if geom.area > 0 and repaired.area / geom.area < 0.95:
+                raise ValueError(f"Map repair lost >5% area for {name}; inspect source")
+            geom = repaired
+            repaired_countries.append(name)
         if geom.intersects(india):
             # Ensure neighboring land does not overlap the provided India outline.
             clipped = polygons_only(geom.difference(india))
@@ -149,6 +157,7 @@ def build(world, india_geo):
         "feature_count": len(results),
         "india_polygon_parts": original_parts,
         "neighbor_country_geometries_clipped": countries_clipped,
+        "invalid_world_geometries_repaired": repaired_countries,
     }
 
 
