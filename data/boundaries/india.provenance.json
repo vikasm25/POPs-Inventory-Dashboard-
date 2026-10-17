@@ -1,0 +1,21 @@
+{
+  "label": "User-supplied boundary; official provenance not independently verified",
+  "source_zip_name": "Shape Files India.zip",
+  "source_zip_sha256": "9b3c6a182479d306086a1829d009605cb7cfbfaf29c3b00cc0f72139b635bfbd",
+  "original_geometry_type": "MultiPolygon",
+  "crs": "EPSG:4326",
+  "original_bounds_lonlat": [
+    68.186249,
+    6.754256,
+    97.415161,
+    37.078331
+  ],
+  "multipolygon_parts": 755,
+  "valid_original": true,
+  "valid_display": true,
+  "display_simplification_tolerance_degrees": 0.0005,
+  "relative_area_change": 2.4081627994334665e-06,
+  "web_geometry_sha256": "950ac831ff359c326f996af2ff3867c20c41800407d8d60777835ab36f729bcc",
+  "web_geometry_bytes": 1209275,
+  "licensing": "Not supplied in the source ZIP; verify before public redistribution."
+}
