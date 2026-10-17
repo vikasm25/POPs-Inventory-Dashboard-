@@ -82,5 +82,38 @@ async function loadPublishedEDGAR() {
   }
 }
 
+/* Load the supplied India shapefile after it has been converted to local GeoJSON.
+   The user-provided archive has no independently verified official provenance.
+   Keep the generic world map masked if the boundary is missing or invalid. */
+async function loadLocalIndiaBoundary() {
+  try {
+    const response = await fetch("./data/boundaries/india.geojson", {cache:"force-cache"});
+    if (!response.ok) {
+      $("boundaryStatus").textContent = "India boundary not installed; upload GeoJSON or add data/boundaries/india.geojson.";
+      return;
+    }
+    const geo = await response.json();
+    if (geo.type !== "FeatureCollection" || geo.features?.length !== 1) {
+      throw Error("Expected one India feature in GeoJSON");
+    }
+    const f = geo.features[0];
+    if (!["Polygon","MultiPolygon"].includes(f.geometry?.type)) {
+      throw Error("India geometry must be polygonal");
+    }
+    const bounds = d3.geoBounds(geo);
+    if (bounds[0][0]<60 || bounds[1][0]>105 || bounds[0][1]<0 || bounds[1][1]>42) {
+      throw Error("India boundary coordinates are outside the expected geographic range");
+    }
+    S.india = geo;
+    $("boundaryStatus").textContent = "India boundary loaded (user-supplied ZIP; source authenticity not verified).";
+    $("boundaryNotice").innerHTML = "<span>ⓘ</span> India outline shown from user-supplied shapefile. Official origin and rights not independently verified.";
+    render();
+  } catch (e) {
+    $("boundaryStatus").textContent = "India boundary unavailable: "+e.message;
+    console.warn("India boundary load failed", e);
+  }
+}
+loadLocalIndiaBoundary();
+
 loadPublishedEDGAR();
 })();

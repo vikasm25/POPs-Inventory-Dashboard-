@@ -113,3 +113,9 @@ This workflow downloads official files **only during scheduled updates**, not ev
 ### Credit
 
 Source: **EDGAR v8.1 Global Unintentional POPs Emissions**, European Commission Joint Research Centre. [Official dataset](https://edgar.jrc.ec.europa.eu/dataset_pop81) · [Dataset DOI](https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438). Acknowledge EDGAR, the associated Muntean et al. (2026, in preparation) work and the dataset DOI, as specified by EDGAR. Check underlying rights and redistribution terms before publication.
+
+## User-supplied India outline (October 2026)
+
+The dashboard attempts to load `data/boundaries/india.geojson` automatically on page load. The file must be committed under that path to be available to visitors. The original user-supplied `Shape Files India.zip` contains one valid EPSG:4326 MultiPolygon (755 polygon parts; bounds 68.186249°E, 6.754256°N to 97.415161°E, 37.078331°N). A reproducible converter is committed at `scripts/prepare_india_boundary.py`.
+
+Run `pip install geopandas shapely` and `python scripts/prepare_india_boundary.py "Shape Files India.zip"`, then commit `data/boundaries/india.geojson` and `data/boundaries/india.provenance.json`. If the GeoJSON is absent, the protective mask remains. The ZIP does not establish official Survey of India provenance or redistribution rights, so verify both before publicly hosting the outline.
