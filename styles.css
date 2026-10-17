@@ -68,3 +68,20 @@
 @media(max-width:1100px){.selection-cards{grid-template-columns:1fr}.choice-list{max-height:230px}}
 @media(max-width:850px){.selection-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.map-table-wrap{height:clamp(300px,52vw,480px)}}
 @media(max-width:650px){.site-nav{gap:9px}.site-nav a{font-size:10px}.topbar{gap:8px;padding-top:9px;padding-bottom:9px}.selection-cards{grid-template-columns:1fr 1fr}.inventory-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.map-table-wrap{height:300px}.selected-location strong{font-size:26px}}
+
+/* Mobile-first final layout adjustments */
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+body,.app-shell,.dashboard,.panel{min-width:0;max-width:100%}
+.panel{overflow-wrap:anywhere}
+button,input,select{font:inherit}
+button,.tab,.choice-row{touch-action:manipulation}
+.site-nav a{font-size:clamp(12px,1vw,15px);padding:8px 2px}
+.selector-note,.selection-footnote,.panel-heading p{font-size:clamp(12px,1vw,14px)}
+.choice-row{font-size:clamp(12px,1.05vw,14px);min-height:36px}
+.choice-row input{width:16px;height:16px}
+.map-viewport{contain:layout paint}
+@media(max-width:950px){.topbar{flex-wrap:wrap;row-gap:12px}.top-actions{flex-wrap:wrap}.site-nav{flex-wrap:wrap}.controls-panel{min-width:0}.selection-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.dashboard{min-width:0}.filter-strip.inventory-filters{grid-template-columns:1fr;max-width:none}.topbar{align-items:flex-start}.site-nav{width:100%;justify-content:flex-start;gap:12px}.site-nav a{font-size:12px}.map-frame{height:clamp(260px,75vw,390px)}.selection-cards{grid-template-columns:1fr}.selector-card{padding:14px}.choice-list{max-height:200px}.map-legend{padding:8px 2px}.map-zoom{transform:scale(.9);transform-origin:top right}.year-control{flex-wrap:wrap}.year-control input[type=range]{min-width:100px;flex:1}.panel-heading{flex-wrap:wrap;gap:8px}.insights-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.site-nav{gap:7px}.site-nav a{font-size:11px}.map-frame{grid-template-columns:51px minmax(0,1fr)}.map-legend{width:51px}.insights-grid{grid-template-columns:1fr}.selected-location strong{font-size:24px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
