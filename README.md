@@ -104,7 +104,7 @@ The supported mass-based pollutants are PCB (aggregate unintentional, **not PCB-
 ### Running synchronization locally
 
 ```bash
-pip install -r scripts/requirements.txt
+pip install -r scripts/edgar-dependencies.txt
 python scripts/sync_edgar.py
 ```
 
