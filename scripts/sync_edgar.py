@@ -43,6 +43,7 @@ SECTOR_MAP = {
     "1A3B": "Transport",
     "1A3BNORES": "Transport",  # EDGAR annual workbook: 1.A.3.b_noRES
     "1A3C+1A3E": "Transport",
+    "1A3C": "Transport",        # EDGAR annual workbook: 1.A.3.c (railways)
     "1A3D": "Transport",
     "1A4": "Buildings",
     "1A5": "Buildings",
@@ -51,6 +52,7 @@ SECTOR_MAP = {
     "2C1+2C2": "Processes",
     "2C3+2C4+2C5+2C6+2C7": "Processes",
     "3C1B": "Agriculture",
+    "3C1": "Agriculture",        # EDGAR annual workbook: 3.C.1 (agricultural burning)
     "4C": "Waste",
 }
 
