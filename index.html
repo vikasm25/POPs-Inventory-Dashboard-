@@ -22,9 +22,9 @@
   </div>
   <div class="top-actions">
     <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
-    <a class="top-link" href="https://edgar.jrc.ec.europa.eu/dataset_pop81" target="_blank" rel="noopener">EDGAR source</a>
+    <nav class="site-nav" aria-label="Main navigation"><a href="./index.html" aria-current="page">Home</a><a href="./how-to-use.html">How to Use</a><a href="./references.html">Data Sources &amp; References</a></nav>
     <button id="themeToggle" class="top-icon" type="button" aria-label="Switch to light theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
-    <button class="top-icon" type="button" id="dataButton" title="Export emissions data" aria-label="Export emissions data"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V3m0 0L8 7m4-4 4 4M4 16v4h16v-4"/></svg></button>
+
   </div>
 </header>
 <main class="dashboard">
@@ -32,55 +32,63 @@
     <div><p class="eyebrow">ANALYTICS / GLOBAL OVERVIEW</p><h1>POPs Emissions <span>Dashboard</span></h1><p>Investigate persistent organic pollutant emissions across countries, inventories and economic sectors.</p></div>
     <div class="intro-aside"><button type="button" id="demoToggle" hidden></button><button type="button" id="exportButton" class="outline-btn">↓ Export data</button></div>
   </section>
-  <div id="statusBanner" class="status-banner demo"><span class="status-dot"></span><span id="statusText">DEMONSTRATION — illustrative figures only. No published inventory data have been loaded.</span><button type="button" id="statusDismiss" aria-label="Dismiss notice">×</button></div>
 
-  <section class="filter-strip" aria-label="Emission data filters">
-    <div class="filter-field"><label for="pollutantSelect">Pollutant</label><div class="select-wrap"><select id="pollutantSelect"><option>PCB (illustrative)</option></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
-    <div class="filter-field"><label id="inventoryLabel">Inventory <span class="muted-label">· multi-select</span></label>
+
+  <section class="filter-strip inventory-filters" aria-label="Inventory selection">
+    <div class="filter-field"><label id="inventoryLabel">Inventory <span class="muted-label">· choose available inventories</span></label>
       <div class="multi" id="inventoryMulti">
         <button class="multi-trigger" type="button" id="inventoryTrigger" aria-haspopup="true" aria-expanded="false" aria-labelledby="inventoryLabel inventorySummary"><span id="inventorySummary">Select inventories</span><span class="chevron">⌄</span></button>
-        <div class="multi-menu" id="inventoryMenu" hidden><div class="menu-heading">INVENTORIES</div><div class="multi-options" id="inventoryOptions"></div><div class="menu-foot"><button type="button" data-kind="inventory" data-action="all">Select all</button><button type="button" data-kind="inventory" data-action="none">Clear</button></div></div>
+        <div class="multi-menu" id="inventoryMenu" hidden><div class="menu-heading">INVENTORIES AVAILABLE FOR COMPARISON</div><div class="multi-options" id="inventoryOptions"></div><div class="menu-foot"><button type="button" data-kind="inventory" data-action="all">Select all</button><button type="button" data-kind="inventory" data-action="none">Clear</button></div></div>
       </div>
     </div>
-    <div class="filter-field"><label id="sectorLabel">Emission source <span class="muted-label">· multi-select</span></label>
-      <div class="multi" id="sectorMulti">
-        <button class="multi-trigger" type="button" id="sectorTrigger" aria-haspopup="true" aria-expanded="false" aria-labelledby="sectorLabel sectorSummary"><span id="sectorSummary">All source categories</span><span class="chevron">⌄</span></button>
-        <div class="multi-menu" id="sectorMenu" hidden><div class="menu-heading">EMISSION SOURCE CATEGORIES</div><div class="multi-options" id="sectorOptions"></div><div class="menu-foot"><button type="button" data-kind="sector" data-action="all">Select all</button><button type="button" data-kind="sector" data-action="none">Clear</button></div></div>
-      </div>
-    </div>
-    <div class="filter-field layer-field"><label for="mapInventory">Map inventory</label><div class="select-wrap"><select id="mapInventory"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+    <div class="filter-field"><label for="mapInventory">Map inventory <span class="muted-label">· controls map and analysis</span></label><div class="select-wrap"><select id="mapInventory"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
   </section>
 
   <section class="top-grid">
     <article class="panel map-panel" id="map-section">
-      <div class="panel-heading"><div><span class="section-icon map-icon">◎</span><div><h2>Global Emissions</h2><p id="mapSubtitle">Country-level emissions · tonnes/year</p></div></div><div class="panel-tools"><button type="button" id="resetCountry" class="icon-btn" title="Reset country" aria-label="Reset country selection">↺</button><span id="mapYearBadge" class="year-badge">2020</span></div></div>
-      <div class="map-frame">
+      <div class="panel-heading"><div><span class="section-icon map-icon">◎</span><div><h2>Global Emissions</h2><p id="mapSubtitle">Country-level emissions · tonnes/year</p></div></div><div class="panel-tools"><span id="mapYearBadge" class="year-badge">2020</span></div></div>
+      <div class="map-stage">
+      <div class="map-frame" id="mapFrame">
         <aside class="map-legend" aria-label="Emissions color scale"><span class="legend-title">EMISSIONS<br/>t/year</span><span class="legend-number" id="legendMax">—</span><div class="legend-scale" id="legendScale"></div><span class="legend-number" id="legendMid">—</span><span class="legend-number" id="legendMin">0</span><div class="legend-empty"><b></b>No data</div><div class="legend-empty"><b class="zero-swatch"></b>Zero</div></aside>
         <div class="map-viewport"><svg id="worldMap" viewBox="0 0 1000 465" role="img" aria-label="Interactive global country emissions map, drag to pan"></svg></div>
         <div class="map-zoom" aria-label="Map zoom"><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset map zoom">⌖</button></div>
         <div id="mapTooltip" class="map-tooltip" role="status"></div>
-        <div id="countryCard" class="country-card" hidden><button type="button" id="closeCountry" aria-label="Close country">×</button><small>SELECTED COUNTRY</small><b id="countryName">—</b><strong id="countryEmission">—</strong><span id="countryDetail">tonnes per year</span></div>
       </div>
-      <div class="map-toolbar"><div class="map-tabs"><button id="mapTab" type="button" class="tab active">◉ &nbsp; Map</button><button id="tableTab" type="button" class="tab">▦ &nbsp; Table</button></div><div class="map-message" id="mapCount">Select any country to explore</div></div>
       <div class="map-table-wrap" id="tableWrap" hidden><div class="table-scroll"><table><thead><tr><th>Country</th><th>ISO3</th><th>Emissions (t/year)</th></tr></thead><tbody id="tableBody"></tbody></table></div></div>
+      </div>
+      <div class="map-toolbar"><div class="map-tabs"><button id="mapTab" type="button" class="tab active" aria-pressed="true">◉ &nbsp; Map</button><button id="tableTab" type="button" class="tab" aria-pressed="false">▦ &nbsp; Table</button></div><div class="map-message" id="mapCount">Countries with observations</div></div>
       <div class="year-control"><div class="year-top"><label for="yearSlider"><span class="timeline-icon">◷</span> Time explorer</label><strong id="yearNumber">2020</strong></div><div class="year-bar"><span id="yearMin">1990</span><input type="range" id="yearSlider" value="2020" min="1990" max="2024" step="1" aria-label="Select year"/><span id="yearMax">2024</span><button type="button" class="play-button" id="playButton" aria-label="Play timeline">▶</button></div></div>
       <div id="boundaryNotice" class="boundary-notice" hidden></div>
     </article>
 
-    <article class="panel ranking-panel">
-      <div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Country Rankings</h2><p>Highest & lowest emitting countries</p></div></div><span class="tiny-pill">TOP 3 EACH</span></div>
-      <div class="ranking-caption"><span>Highest emissions</span><span id="rankingUnits">t/year · 2020</span></div>
-      <div class="rank-list" id="rankTop"></div><div class="rank-separator"></div>
-      <div class="ranking-caption low"><span>Lowest emissions</span><span>non-missing observations</span></div>
-      <div class="rank-list" id="rankLow"></div>
-      <div class="rank-note">Countries without observations are excluded from rankings. Zero is an observation, not missing data.</div>
+    <article class="panel controls-panel" aria-label="Country and pollutant controls">
+      <div class="panel-heading"><div><span class="section-icon">◎</span><div><h2>Selected Location</h2><p>Click a country on the map or a table row</p></div></div><button type="button" id="resetCountry" class="icon-btn" title="Show global emissions" aria-label="Reset to global">Global ↺</button></div>
+      <div id="countryCard" class="selected-location">
+        <div class="location-heading"><span id="countryName">Global</span><button type="button" id="closeCountry" class="clear-country" hidden>Clear selection ×</button></div>
+        <strong id="countryEmission">—</strong>
+        <span id="countryDetail">EDGAR · 2024 · tonnes/year</span>
+      </div>
+      <div class="selection-cards">
+        <section class="selector-card" aria-labelledby="pollutantTitle">
+          <div class="selector-heading"><h3 id="pollutantTitle">Pollutant</h3><span>Choose one</span></div>
+          <p class="selector-note">Only one pollutant can be selected at a time.</p>
+          <div id="pollutantOptions" class="choice-list"></div>
+          <select id="pollutantSelect" hidden aria-label="Selected pollutant"></select>
+        </section>
+        <section class="selector-card" aria-labelledby="sourceTitle">
+          <div class="selector-heading"><h3 id="sourceTitle">Emission Sources</h3><div class="selector-actions"><button type="button" id="sourcesAll">All</button><button type="button" id="sourcesNone">None</button></div></div>
+          <p class="selector-note">Select the source categories to include.</p>
+          <div id="sectorOptions" class="choice-list"></div>
+        </section>
+      </div>
+      <p class="selection-footnote">Pollutants and source categories follow the selected map inventory. A missing observation is not zero.</p>
     </article>
   </section>
 
   <section class="mid-grid">
     <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-icon">⌁</span><div><h2>Emissions Over Time</h2><p id="trendSubtitle">Sector-specific trajectories for the selected inventory</p></div></div><span class="tiny-pill" id="trendScope">GLOBAL</span></div><div class="trend-legend" id="trendLegend"></div><div class="plot-wrap" id="trendPlot"></div></article>
-    <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Key Statistics</h2><p>Selected inventory · selected year</p></div></div></div><div class="kpi-grid">
-      <div class="kpi"><small>Global emissions</small><strong id="kpiTotal">—</strong><span>tonnes per year</span></div>
+    <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Global Statistics</h2><p>Selected inventory · selected year</p></div></div></div><div class="kpi-grid">
+      <div class="kpi"><small>Median emitting country</small><strong id="kpiMedian">—</strong><span>tonnes/year · positive values</span></div>
       <div class="kpi"><small>Year-on-year change</small><strong id="kpiChange">—</strong><span>vs. previous reported year</span></div>
       <div class="kpi"><small>Reporting countries</small><strong id="kpiCountries">—</strong><span>with inventory observations</span></div>
       <div class="kpi"><small>Largest emitting country</small><strong class="kpi-word" id="kpiCountry">—</strong><span id="kpiShare">share of reported total</span></div>
@@ -94,7 +102,7 @@
     <article class="panel insights-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Emissions Insights</h2><p>Concentration, sector dominance and long-term change</p></div></div></div><div class="insights-grid"><div class="insight"><small>Top 3 countries' share</small><strong id="insightTop3">—</strong><span>of reported global emissions</span></div><div class="insight"><small>Largest source category</small><strong class="insight-text" id="insightSector">—</strong><span id="insightSectorShare">—</span></div><div class="insight"><small>Change since first reported year</small><strong id="insightLongChange">—</strong><span id="insightPeriod">—</span></div><div class="insight"><small>Countries reporting positive emissions</small><strong id="insightPositive">—</strong><span>excludes reported zero values</span></div></div></article>
   </section>
   <div hidden id="methodology"><span id="coverageBadge"></span><span id="coverageYears"></span><span id="coverageRows"></span><span id="uploadMessage" role="status"></span><span id="boundaryStatus"></span><input id="csvUpload" type="file" accept=".csv" multiple/><input id="boundaryUpload" type="file" accept=".geojson,.json"/><button id="clearImports" type="button"></button></div>
-  <footer><span>POPs Atlas • A research visualization workspace</span><span>EDGAR and Breivik are inventories · Emission sources are economic sectors</span></footer>
+  <footer><span>POPs Atlas • Global emissions explorer</span><span><a href="./how-to-use.html">How to Use</a> · <a href="./references.html">Data Sources &amp; References</a></span></footer>
 </main>
 </div>
 </body>
