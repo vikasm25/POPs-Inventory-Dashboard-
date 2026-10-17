@@ -22,7 +22,7 @@
   </div>
   <div class="top-actions">
     <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
-    <nav class="site-nav" aria-label="Main navigation"><a href="./index.html" aria-current="page">Home</a><a href="./how-to-use.html">How to Use</a><a href="./references.html">Data Sources &amp; References</a></nav>
+    <nav class="site-nav" aria-label="Main navigation"><a href="./index.html" aria-current="page">Home</a><a href="./how-to-use.html">How to Use</a><a href="./about.html">About</a><a href="./references.html" aria-label="Data Sources and References">Sources</a></nav>
     <button id="themeToggle" class="top-icon" type="button" aria-label="Switch to light theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
 
   </div>
@@ -53,9 +53,13 @@
       <div class="panel-heading"><div><span class="section-icon map-icon">◎</span><div><h2>Global Emissions</h2><p id="mapSubtitle">Country-level emissions · tonnes/year</p></div></div><div class="panel-tools"><span id="mapYearBadge" class="year-badge">2020</span></div></div>
       <div class="map-stage">
       <div class="map-frame" id="mapFrame">
-        <aside class="map-legend" aria-label="Emissions color scale"><span class="legend-title">EMISSIONS<br/>t/year</span><span class="legend-number" id="legendMax">—</span><div class="legend-scale" id="legendScale"></div><span class="legend-number" id="legendMid">—</span><span class="legend-number" id="legendMin">0</span><div class="legend-empty"><b></b>No data</div><div class="legend-empty"><b class="zero-swatch"></b>Zero</div></aside>
+        <aside class="map-legend" aria-label="Logarithmic emissions color scale">
+          <div class="legend-title">EMISSIONS<span>t/year</span></div>
+          <div class="legend-ramp"><div class="legend-scale" id="legendScale" aria-hidden="true"></div><div class="legend-ticks"><span class="legend-number" id="legendMax">—</span><span class="legend-number" id="legendMid">—</span><span class="legend-number" id="legendMin">—</span></div></div>
+          <div class="legend-empty"><b></b>No data</div><div class="legend-empty"><b class="zero-swatch"></b>Zero</div>
+        </aside>
         <div class="map-viewport"><svg id="worldMap" viewBox="0 0 1000 465" role="img" aria-label="Interactive global country emissions map, drag to pan"></svg></div>
-        <div class="map-zoom" aria-label="Map zoom"><button type="button" id="zoomIn" aria-label="Zoom in">+</button><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset map zoom">⌖</button></div>
+        <div class="map-zoom" aria-label="Map zoom"><button type="button" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button><button type="button" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button><button type="button" id="zoomReset" aria-label="Reset map position and zoom" title="Reset map">⌖</button></div>
         <div id="mapTooltip" class="map-tooltip" role="status"></div>
       </div>
       <div class="map-table-wrap" id="tableWrap" hidden><div class="table-scroll"><table><thead><tr><th>Country</th><th>ISO3</th><th>Emissions (t/year)</th></tr></thead><tbody id="tableBody"></tbody></table></div></div>
@@ -87,7 +91,7 @@
 
   <section class="mid-grid">
     <article class="panel trend-panel"><div class="panel-heading"><div><span class="section-icon">⌁</span><div><h2>Emissions Over Time</h2><p id="trendSubtitle">Sector-specific trajectories for the selected inventory</p></div></div><span class="tiny-pill" id="trendScope">GLOBAL</span></div><div class="trend-legend" id="trendLegend"></div><div class="plot-wrap" id="trendPlot"></div></article>
-    <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Global Statistics</h2><p>Selected inventory · selected year</p></div></div></div><div class="kpi-grid">
+    <article class="panel kpi-panel"><div class="panel-heading"><div><span class="section-icon">◫</span><div><h2>Global Statistics</h2><p>Selected inventory · <span data-current-year>2024</span></p></div></div></div><div class="kpi-grid">
       <div class="kpi"><small>Median emitting country</small><strong id="kpiMedian">—</strong><span>tonnes/year · positive values</span></div>
       <div class="kpi"><small>Year-on-year change</small><strong id="kpiChange">—</strong><span>vs. previous reported year</span></div>
       <div class="kpi"><small>Reporting countries</small><strong id="kpiCountries">—</strong><span>with inventory observations</span></div>
@@ -96,13 +100,13 @@
   </section>
 
   <section class="bottom-grid">
-    <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · selected year</p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
+    <article class="panel"><div class="panel-heading"><div><span class="section-icon">◕</span><div><h2>Emissions by Source Category</h2><p>Sector contribution · <span data-current-year>2024</span></p></div></div></div><div class="donut-layout"><div id="sectorDonut" class="donut-slot"></div><div id="sectorLegend" class="donut-legend"></div></div></article>
     <article class="panel"><div class="panel-heading"><div><span class="section-icon">▥</span><div><h2>Regional Distribution</h2><p>Reported emissions by geographic region</p></div></div></div><div id="regionalChart" class="regional-slot"></div></article>
-    <article class="panel top-polluters-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Top Polluters</h2><p>Seven highest-emitting countries · selected year</p></div></div></div><div id="topPolluters" class="top-polluters-list"></div><p class="panel-footnote">Bar length is relative to the highest-emitting country; percentages indicate shares of reported global emissions.</p></article>
+    <article class="panel top-polluters-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Top Polluters</h2><p>Seven highest-emitting countries · <span data-current-year>2024</span></p></div></div></div><div id="topPolluters" class="top-polluters-list"></div><p class="panel-footnote">Only countries and territories are ranked; international shipping is excluded. Shares use all reported global emissions.</p></article>
     <article class="panel insights-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Emissions Insights</h2><p>Concentration, sector dominance and long-term change</p></div></div></div><div class="insights-grid"><div class="insight"><small>Top 3 countries' share</small><strong id="insightTop3">—</strong><span>of reported global emissions</span></div><div class="insight"><small>Largest source category</small><strong class="insight-text" id="insightSector">—</strong><span id="insightSectorShare">—</span></div><div class="insight"><small>Change since first reported year</small><strong id="insightLongChange">—</strong><span id="insightPeriod">—</span></div><div class="insight"><small>Countries reporting positive emissions</small><strong id="insightPositive">—</strong><span>excludes reported zero values</span></div></div></article>
   </section>
   <div hidden id="methodology"><span id="coverageBadge"></span><span id="coverageYears"></span><span id="coverageRows"></span><span id="uploadMessage" role="status"></span><span id="boundaryStatus"></span><input id="csvUpload" type="file" accept=".csv" multiple/><input id="boundaryUpload" type="file" accept=".geojson,.json"/><button id="clearImports" type="button"></button></div>
-  <footer><span>POPs Atlas • Global emissions explorer</span><span><a href="./how-to-use.html">How to Use</a> · <a href="./references.html">Data Sources &amp; References</a></span></footer>
+  <footer><span>POPs Atlas • Global emissions explorer</span><span><a href="./how-to-use.html">How to Use</a> · <a href="./about.html">About</a> · <a href="./references.html">Data Sources &amp; References</a></span></footer>
 </main>
 </div>
 </body>
