@@ -30,7 +30,7 @@ function options(){
  S.inventories=new Set(inv);
  const inventory=$("inventorySelect");
  inventory.replaceChildren();
- inv.forEach(name=>inventory.add(new Option(({"EDGAR":"EDGAR v8.1 — Global Unintentional POPs (1970–2024)","Breivik":"Breivik et al. (2016) — Global PCB Emission Scenarios (1930–2100)"})[name]||name,name)));
+ inv.forEach(name=>inventory.add(new Option(({"EDGAR":"EDGAR v8.1 POPs","Breivik":"Breivik PCBs (2016)"})[name]||name,name)));
  inventory.value=S.mapInventory;inventory.disabled=!inv.length;
  const pols=pollutantsFor(S.mapInventory);
  const current=S.activePollutant;
