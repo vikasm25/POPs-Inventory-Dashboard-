@@ -1,0 +1,26 @@
+{
+  "map_type": "unified_static_geojson",
+  "world_source": "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson",
+  "world_input_sha256": "e8796f1162d7dfa96ccf36047960fe5d40806eb243272da4048153d049fc5f8f",
+  "india_source": "data/boundaries/india.geojson",
+  "india_input_sha256": "950ac831ff359c326f996af2ff3867c20c41800407d8d60777835ab36f729bcc",
+  "combined_sha256": "eb108ea8f96a4f9cf16be72ee83c4f1e5bf640deed0745fbde7946d7c4597864",
+  "coordinate_system": "EPSG:4326",
+  "official_india_provenance_verified": false,
+  "license_status": "World base and India geometry redistribution rights must be checked separately",
+  "feature_count": 177,
+  "india_polygon_parts": 755,
+  "neighbor_country_geometries_clipped": [
+    "Afghanistan",
+    "Bangladesh",
+    "Bhutan",
+    "China",
+    "Myanmar",
+    "Nepal",
+    "Pakistan"
+  ],
+  "invalid_world_geometries_repaired": [
+    "Antarctica",
+    "Canada"
+  ]
+}
