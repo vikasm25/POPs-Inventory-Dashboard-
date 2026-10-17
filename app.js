@@ -67,7 +67,10 @@ function byCountry(inv=S.mapInventory){return grouped(filter(inv,S.year,null,tru
 function allInventories(){return [...new Set(data().map(r=>r.inventory))]}
 function canvas(){const t=document.documentElement;t.dataset.theme=S.theme;const b=$("themeToggle");b.querySelector(".theme-caption").textContent=S.theme==="dark"?"Dark":"Light";b.setAttribute("aria-label","Switch to "+(S.theme==="dark"?"light":"dark")+" theme");document.querySelector('meta[name="theme-color"]').content=S.theme==="dark"?"#081727":"#f3f7fc"}
 function notice(){}
-function displayCountryName(name,iso){return String(iso||"").toUpperCase()==="RUS"||canon(name)==="russia"?"Russia":name}
+function displayCountryName(name,iso){
+ const names={RUS:"Russia",USA:"United States",GBR:"United Kingdom",KOR:"South Korea",PRK:"North Korea",CZE:"Czechia",TUR:"Türkiye",VNM:"Vietnam",LAO:"Laos",BOL:"Bolivia",VEN:"Venezuela",TZA:"Tanzania",COD:"Democratic Republic of the Congo",COG:"Republic of the Congo",IRN:"Iran",SYR:"Syria",MDA:"Moldova",BRN:"Brunei",CPV:"Cabo Verde",SWZ:"Eswatini",MKD:"North Macedonia",CIV:"Côte d’Ivoire"};
+ return names[String(iso||"").toUpperCase()]||name;
+}
 function isCountryRecord(r){const iso=String(r.iso||"").toUpperCase();return REGIONS.includes(S.regionLookup[iso])&&!/^(int[,. ]*shipping|international shipping|international aviation)$/i.test(String(r.name||r.country||""))}
 function countryRows(){return byCountry().filter(isCountryRecord)}
 function updateYearCaptions(year=S.year){document.querySelectorAll("[data-current-year]").forEach(el=>el.textContent=year)}
