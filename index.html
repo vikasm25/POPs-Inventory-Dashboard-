@@ -64,7 +64,7 @@
       <div class="map-toolbar"><div class="map-tabs"><button id="mapTab" type="button" class="tab active">◉ &nbsp; Map</button><button id="tableTab" type="button" class="tab">▦ &nbsp; Table</button></div><div class="map-message" id="mapCount">Select any country to explore</div></div>
       <div class="map-table-wrap" id="tableWrap" hidden><div class="table-scroll"><table><thead><tr><th>Country</th><th>ISO3</th><th>Emissions (t/year)</th></tr></thead><tbody id="tableBody"></tbody></table></div></div>
       <div class="year-control"><div class="year-top"><label for="yearSlider"><span class="timeline-icon">◷</span> Time explorer</label><strong id="yearNumber">2020</strong></div><div class="year-bar"><span id="yearMin">1990</span><input type="range" id="yearSlider" value="2020" min="1990" max="2024" step="1" aria-label="Select year"/><span id="yearMax">2024</span><button type="button" class="play-button" id="playButton" aria-label="Play timeline">▶</button></div></div>
-      <div id="boundaryNotice" class="boundary-notice"><span>ⓘ</span> India-region border detail withheld pending verified Survey of India outline. <a href="https://surveyofindia.gov.in/pages/outline-maps-of-india" target="_blank" rel="noopener noreferrer">Official vector ↗</a></div>
+      <div id="boundaryNotice" class="boundary-notice" hidden></div>
     </article>
 
     <article class="panel ranking-panel">
@@ -96,7 +96,7 @@
       <label class="upload-zone" for="csvUpload"><span>⇧</span><strong>Import inventory CSV</strong><small>Country / year / pollutant / inventory / emission source</small><input type="file" id="csvUpload" accept=".csv,text/csv" multiple hidden/></label>
       <div class="data-links"><a href="./data/inventory-template.csv" download>Download CSV template ↗</a><button type="button" id="clearImports">Clear imports</button></div>
       <div id="uploadMessage" class="upload-message" role="status"></div>
-      <div class="boundary-upload"><label for="boundaryUpload">＋ Load Survey of India GeoJSON<input type="file" id="boundaryUpload" accept=".geojson,.json" hidden/></label><span id="boundaryStatus">Official India outline not loaded</span></div>
+      <div class="boundary-upload" hidden><label for="boundaryUpload">＋ Load GeoJSON<input type="file" id="boundaryUpload" accept=".geojson,.json" hidden/></label><span id="boundaryStatus"></span></div>
     </article>
   </section>
   <footer><span>POPs Atlas • A research visualization workspace</span><span>EDGAR and Breivik are inventories · Emission sources are economic sectors</span></footer>
