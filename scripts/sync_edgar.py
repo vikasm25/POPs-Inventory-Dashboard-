@@ -27,7 +27,9 @@ from openpyxl import load_workbook
 
 SOURCE_PAGE = "https://edgar.jrc.ec.europa.eu/dataset_pop81"
 DOI = "https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438"
-POLLUTANTS = ("PCB", "HCB", "PAH_BaP", "PAH_BbF", "PAH_BkF", "PAH_IcdP", "PCDD_F")
+POLLUTANTS = ("PCB", "HCB", "PAH_BaP", "PAH_BbF", "PAH_BkF", "PAH_IcdP")
+# PCDD/F is published in toxic-equivalent (TEQ) units, NOT tonnes of substance.
+# Exclude until a dedicated TEQ-aware presentation and parser is implemented.
 # Mappings based on the annual, sector-specific IPCC 2006 categories on
 # https://edgar.jrc.ec.europa.eu/dataset_pop81 (do not map generic 1A blindly).
 SECTOR_MAP = {
@@ -45,8 +47,8 @@ SECTOR_MAP = {
 }
 FIELDS = ["country", "iso3", "year", "pollutant", "inventory",
           "emission_source", "emissions_tonnes_per_year", "unit"]
-HEADERS = {"country_code_a3": "iso", "name": "country",
-           "ipcc_code_2006_for_standard_report": "code"}
+HEADERS = {"countrycodea3": "iso", "name": "country",
+           "ipcccode2006forstandardreport": "code"}
 MAX_ZIP_BYTES = 80 * 1024 * 1024
 MAX_UNZIPPED_BYTES = 160 * 1024 * 1024
 SESSION = requests.Session()
@@ -145,9 +147,9 @@ def workbook_rows(raw: bytes, pollutant: str):
         unknown = Counter()
         outputs = []
         for row in it:
-            code = cleaned(row[headers["ipcc_code_2006_for_standard_report"]])
+            code = cleaned(row[headers["ipcccode2006forstandardreport"]])
             country = cleaned(row[headers["name"]])
-            iso = cleaned(row[headers["country_code_a3"]]).upper()
+            iso = cleaned(row[headers["countrycodea3"]]).upper()
             if not country or not code:
                 continue
             # Skip explicitly labeled grand totals, never add them to country values.
