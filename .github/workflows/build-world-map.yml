@@ -1,0 +1,34 @@
+name: Build unified world map
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'data/boundaries/india.geojson'
+      - 'scripts/build_world_map.py'
+permissions:
+  contents: write
+concurrency:
+  group: map-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install geometry dependencies
+        run: pip install shapely==2.1.2 requests==2.32.3
+      - name: Assemble and verify canonical world GeoJSON
+        run: python scripts/build_world_map.py
+      - name: Commit updated basemap
+        run: |
+          if [ -n "$(git status --porcelain -- data/boundaries/world_india.geojson data/boundaries/world_india.provenance.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/boundaries/world_india.geojson data/boundaries/world_india.provenance.json
+            git commit -m "data: regenerate canonical world boundary map"
+            git push
+          fi
