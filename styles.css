@@ -333,3 +333,32 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
  .map-frame{grid-template-columns:32px minmax(0,1fr)!important}
  .top-country-head{flex-wrap:wrap;gap:2px}
 }
+
+
+/* Editorial layouts for the guide and references pages */
+.guide-intro{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:18px;background:var(--panel2)}
+.guide-intro h2{font-size:clamp(23px,2.5vw,32px);margin:0}
+.guide-intro p{margin:0;max-width:70ch;color:var(--muted);font-size:15px;line-height:1.65}
+.guide-kicker,.reference-kicker{font-size:11px;letter-spacing:1.5px;font-weight:750;color:var(--blue)}
+.guide-home-link{display:inline-flex;align-items:center;min-height:40px;padding:8px 15px;border-radius:9px;border:1px solid var(--line);font-size:14px;font-weight:700;margin-top:7px}
+.guide-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-bottom:17px}
+.guide-step{display:grid;grid-template-columns:54px minmax(0,1fr);gap:15px;align-items:start}
+.guide-step-number{width:50px;height:50px;display:grid;place-items:center;background:var(--panel2);color:var(--blue);border:1px solid var(--line);border-radius:13px;font:700 19px "Space Grotesk",sans-serif}
+.guide-step h2{margin:2px 0 9px;font-size:17px}
+.guide-step p{font-size:14px;line-height:1.65;color:var(--muted);margin:0}
+.guide-tips,.reference-support{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.guide-tips h2,.reference-support h2{font-size:17px}
+.guide-tips p,.reference-support p,.reference-main p{font-size:14px;line-height:1.7;color:var(--muted)}
+.reference-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:17px}
+.reference-stat{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:19px;display:flex;flex-direction:column;gap:7px}
+.reference-stat strong{font:700 clamp(19px,2.1vw,27px) "Space Grotesk",sans-serif;color:var(--text)}
+.reference-stat span{font-size:13px;color:var(--muted)}
+.reference-main{margin-bottom:17px}
+.reference-main h2{font-size:21px;margin:8px 0}
+.reference-table{overflow-x:auto}
+.reference-table table{width:100%;border-collapse:collapse;min-width:650px}
+.reference-table th,.reference-table td{padding:14px 12px;border-bottom:1px solid var(--line);font-size:13px;line-height:1.5;text-align:left}
+.reference-table th{color:var(--muted);font-weight:700}
+.reference-support{margin-top:17px}
+@media(max-width:760px){.guide-steps,.guide-tips,.reference-support{grid-template-columns:minmax(0,1fr)}.guide-step{grid-template-columns:44px minmax(0,1fr);gap:11px}.guide-step-number{width:42px;height:42px;font-size:16px}.reference-overview{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.reference-stat{padding:12px}.reference-stat strong{font-size:17px}.reference-stat span{font-size:12px}}
+@media(max-width:440px){.reference-overview{grid-template-columns:minmax(0,1fr)}.reference-stat{padding:13px 15px}.guide-step h2{font-size:17px}}
