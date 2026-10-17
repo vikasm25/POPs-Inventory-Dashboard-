@@ -91,3 +91,25 @@ To restore India's outline, legally obtain the approved official vector data fro
 ## References
 - [EDGAR v8.1 POPs inventory / sectors](https://edgar.jrc.ec.europa.eu/dataset_pop81)
 - [Survey of India official map resources](https://surveyofindia.gov.in/pages/outline-maps-of-india)
+
+
+## Automatic EDGAR synchronization
+
+The GitHub Actions workflow `.github/workflows/sync-edgar.yml` runs every Monday at 05:13 UTC, or can be launched via **Actions → Sync EDGAR POPs inventories → Run workflow**. It reads the official annual EDGAR v8.1 country-sector ZIP download links from the [EDGAR POPs dataset page](https://edgar.jrc.ec.europa.eu/dataset_pop81), checks archive SHA-256 digests, validates annual IPCC 2006 sector records, converts kton/year to tonnes/year, and writes compact pollutant-specific JSON files plus a manifest to `data/edgar/`. A commit is created only if processed data change. On dashboard load, a valid manifest automatically triggers EDGAR imports; otherwise the clearly labeled illustrative demo remains.
+
+**Important bootstrap status:** The synchronizer code is committed but the scheduled workflow has **not yet been confirmed to complete against real EDGAR Excel files**. Its initial execution may need workbook-layout adjustments; it fails closed rather than silently publishing partial or fabricated totals. No EDGAR emission observations are claimed available until the first successful workflow commit creates `data/edgar/manifest.json`. A GitHub Actions run requires repository Actions permissions and push rights for `GITHUB_TOKEN`.
+
+The supported mass-based pollutants are PCB (aggregate unintentional, **not PCB-28**), HCB, and four PAHs (BaP, BbF, BkF, IcdP). EDGAR PCDD/F is deliberately excluded because the official dataset reports it in toxic-equivalent (TEQ) units, not tonnes of pollutant. This requires a separate unit mode before enabling it.
+
+### Running synchronization locally
+
+```bash
+pip install -r scripts/requirements.txt
+python scripts/sync_edgar.py
+```
+
+This workflow downloads official files **only during scheduled updates**, not every time a visitor opens the map. The dashboard fetches lightweight static JSON directly from its hosting origin.
+
+### Credit
+
+Source: **EDGAR v8.1 Global Unintentional POPs Emissions**, European Commission Joint Research Centre. [Official dataset](https://edgar.jrc.ec.europa.eu/dataset_pop81) · [Dataset DOI](https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438). Acknowledge EDGAR, the associated Muntean et al. (2026, in preparation) work and the dataset DOI, as specified by EDGAR. Check underlying rights and redistribution terms before publication.
