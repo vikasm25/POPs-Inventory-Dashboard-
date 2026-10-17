@@ -262,3 +262,74 @@ button,.tab,.choice-row{touch-action:manipulation}
  .filter-strip.inventory-filters .select-wrap select{height:50px}
  .map-panel #mapSubtitle{max-width:210px}
 }
+
+
+/* Cartographic and analytical layout polish */
+html[data-theme="dark"]{--ocean-fill:#142c3e;--ocean-label:#8daabc}
+html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
+.map-frame{background:var(--ocean-fill)}
+.map-viewport{background:var(--ocean-fill)}
+.ocean{fill:var(--ocean-fill)}
+.ocean-labels{pointer-events:none}
+.ocean-labels text{fill:var(--ocean-label);font:600 12px "DM Sans",sans-serif;letter-spacing:2px;opacity:.8}
+.map-frame{column-gap:7px;background:var(--panel);overflow:hidden}
+.map-legend{border-right:0!important;border-radius:8px!important;background:var(--panel2);margin-right:0;min-width:0}
+.map-viewport{border-radius:8px;min-width:0;overflow:hidden}
+.map-viewport svg{display:block;width:100%;height:100%;preserveAspectRatio:xMidYMid meet}
+.year-bar{display:flex;align-items:center;flex-wrap:nowrap!important;min-width:0;gap:12px}
+.year-bar #yearMin,.year-bar #yearMax{white-space:nowrap!important;flex:0 0 auto;word-break:keep-all;overflow-wrap:normal;font-variant-numeric:tabular-nums;font-size:13px}
+.year-bar input[type="range"]{min-width:0!important;flex:1 1 auto!important;width:auto}
+.year-bar .play-button{flex:0 0 auto}
+.filter-strip.inventory-filters{width:100%;grid-template-columns:minmax(170px,240px) minmax(240px,380px) minmax(0,1fr)!important;justify-content:stretch}
+.filter-strip.inventory-filters .filter-action{justify-self:end}
+.top-polluters-list{display:flex;flex-direction:column;gap:8px}
+.top-country-row{display:flex;align-items:center;gap:12px;width:100%;padding:9px 7px;text-align:left;color:var(--text);background:transparent;border:0;border-radius:9px}
+.top-country-row:hover,.top-country-row:focus-visible{background:var(--panel2)}
+.top-country-rank{width:22px;flex:0 0 22px;font-size:13px;font-weight:700;color:var(--muted);text-align:center}
+.top-country-main{display:block;min-width:0;flex:1}
+.top-country-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;margin-bottom:7px}
+.top-country-head b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-country-head>span{white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+.top-country-track{display:block;height:7px;background:var(--control);border-radius:5px;overflow:hidden}
+.top-country-track span{display:block;height:100%;border-radius:5px;background:var(--blue)}
+.region-note{font-size:12px;color:var(--muted);margin:9px 0 0}
+.plot-wrap{height:clamp(250px,23vw,325px)}
+.plot-wrap svg{height:100%;width:100%}
+.regional-slot{min-height:270px}
+.regional-slot svg{width:100%;height:auto;max-height:320px}
+.donut-layout{grid-template-columns:minmax(175px,.8fr) minmax(0,1.2fr);gap:12px}
+.donut-slot svg{max-height:260px}
+@media(min-width:1001px){
+ .map-frame{height:auto!important;aspect-ratio:calc(1000 / 465);min-height:0!important}
+ .map-viewport{aspect-ratio:1000/465}
+ .map-legend{width:47px!important}
+}
+@media(min-width:701px) and (max-width:1000px){
+ .map-frame{height:auto!important;aspect-ratio:calc(1000 / 465);min-height:0!important}
+ .map-viewport{aspect-ratio:1000/465}
+ .filter-strip.inventory-filters{grid-template-columns:minmax(140px,220px) minmax(200px,340px) minmax(0,1fr)!important}
+}
+@media(max-width:700px){
+ .map-frame{height:auto!important;aspect-ratio:1000/570;min-height:0!important;grid-template-columns:34px minmax(0,1fr)!important;gap:5px}
+ .map-viewport{height:100%;min-height:0}
+ .map-viewport svg{height:100%;width:100%}
+ .filter-strip.inventory-filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+ .filter-strip.inventory-filters .filter-action{grid-column:1/-1;justify-self:stretch}
+ .year-bar{gap:7px!important;flex-wrap:nowrap!important}
+ .year-bar #yearMin,.year-bar #yearMax{font-size:12px}
+ .year-bar input[type="range"]{flex-basis:auto!important;width:auto!important;height:44px}
+ .year-bar .play-button{min-width:44px}
+ .top-country-head{font-size:13px}
+ .top-country-head>span{font-size:11px}
+ .donut-layout{grid-template-columns:minmax(0,1fr)}
+ .donut-slot{max-width:270px;margin:auto}
+ .regional-slot svg{max-height:310px}
+}
+@media(max-width:380px){
+ .filter-strip.inventory-filters{grid-template-columns:minmax(0,1fr)!important}
+ .filter-strip.inventory-filters .filter-action{grid-column:auto}
+ .year-bar{gap:4px!important}
+ .year-bar #yearMin,.year-bar #yearMax{font-size:11px}
+ .map-frame{grid-template-columns:32px minmax(0,1fr)!important}
+ .top-country-head{flex-wrap:wrap;gap:2px}
+}
