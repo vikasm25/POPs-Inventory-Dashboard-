@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "inventory": "EDGAR",
+  "release": "v8.1",
+  "source": "https://edgar.jrc.ec.europa.eu/dataset_pop81",
+  "doi": "https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438",
+  "citation": "Muntean et al. (2026): EDGAR v8.1 Global Unintentional POPs Emissions, EC JRC.",
+  "acknowledgement": "EDGAR website, Muntean et al. (2026, in preparation), and the dataset DOI.",
+  "years": [
+    1970,
+    2024
+  ],
+  "pollutants": {
+    "PCB": {
+      "path": "data/edgar/PCB.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PCB_1970_2024.zip",
+      "archive_sha256": "2165fda595b214494b0d41e8ab330bdc733d7fe069f82adee3273c5d76f2e966",
+      "workbook_sha256": {
+        "EDGAR_PCB_1970_2024.xlsx": "59396e8ae9f94d8ef5951db713dbe12ff745afd3bb0dcfa5a01a199863c2ebe3"
+      },
+      "records": 53625,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "Aggregate, unintentional PCB emissions; NOT PCB-28."
+    },
+    "HCB": {
+      "path": "data/edgar/HCB.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_HCB_1970_2024.zip",
+      "archive_sha256": "47a946988ef340dc26ebfc90d1d998eca5de1ec9481f29a77c34f78dd4de91fd",
+      "workbook_sha256": {
+        "EDGAR_HCB_1970_2024.xlsx": "9b66d219e68aca4475f186a69e654f3830fe37807628491308c986961a7f777a"
+      },
+      "records": 39990,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "See official EDGAR substance definition."
+    },
+    "PAH_BaP": {
+      "path": "data/edgar/PAH_BaP.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BaP_1970_2024.zip",
+      "archive_sha256": "a07df7253d4679cb460925de44d3c15c1eaafd43ea47641d0c6c89f7a3a01fe6",
+      "workbook_sha256": {
+        "EDGAR_PAH_BaP_1970_2024.xlsx": "a52caa11af9aa8723b799d1a2a79d15c31357db447ebec144dd85138b793a940"
+      },
+      "records": 73115,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "See official EDGAR substance definition."
+    },
+    "PAH_BbF": {
+      "path": "data/edgar/PAH_BbF.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BbF_1970_2024.zip",
+      "archive_sha256": "9e03bcd214b33f3892cfacb6b7c7771c3271f93bba0f2954b7d7e36760363f9b",
+      "workbook_sha256": {
+        "EDGAR_PAH_BbF_1970_2024.xlsx": "3f6cdf3ee25633d6b8e4ace031908623debcc630cb5e52c3bc001dbc78480462"
+      },
+      "records": 74102,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "See official EDGAR substance definition."
+    },
+    "PAH_BkF": {
+      "path": "data/edgar/PAH_BkF.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BkF_1970_2024.zip",
+      "archive_sha256": "bee9e6db3dc59772b1395d71a144227caad20f4ae462cd15c0e5428c1d2f7cd2",
+      "workbook_sha256": {
+        "EDGAR_PAH_BkF_1970_2024.xlsx": "01f046836bf1be5a7bd758cc4221844550aa649caf0e8097775a2c055f964e60"
+      },
+      "records": 74102,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "See official EDGAR substance definition."
+    },
+    "PAH_IcdP": {
+      "path": "data/edgar/PAH_IcdP.json",
+      "archive_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_IcdP_1970_2024.zip",
+      "archive_sha256": "28dbb62e531e8d270a28e9399abb5f4363c09568ada5c4cd07d0ea9bfbbcc5ee",
+      "workbook_sha256": {
+        "EDGAR_PAH_IcdP_1970_2024.xlsx": "176ea323c8f803484026d387d873eed40a3e82acccb9ae3efb6677f2df0c1e56"
+      },
+      "records": 73934,
+      "years": [
+        1970,
+        2024
+      ],
+      "units": "tonnes/year",
+      "note": "See official EDGAR substance definition."
+    }
+  }
+}
