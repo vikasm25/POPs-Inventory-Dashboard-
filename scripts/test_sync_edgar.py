@@ -14,6 +14,8 @@ class SectorMappingTests(unittest.TestCase):
             "2.C": "Processes",
             "4.C": "Waste",
             "1.A.3.d": "Transport",
+            "1.A.3.c": "Transport",
+            "3.C.1": "Agriculture",
         }
         for code, expected in samples.items():
             with self.subTest(code=code):
