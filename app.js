@@ -88,7 +88,9 @@ function updateMapYear(){
  if(!S.world||!S.mapZoomBehavior)return;
  const byISO=new Map(),byName=new Map();
  for(const c of byCountry()){if(c.iso)byISO.set(c.iso,c.value);byName.set(canon(c.name),c.value)}
- const {lower,scale}=mapScale();
+ const {lower,upper,scale}=mapScale();
+ $("legendMax").textContent=fmt(upper);$("legendMid").textContent=fmt(Math.sqrt(lower*upper));$("legendMin").textContent=fmt(lower);
+ $("mapSubtitle").textContent=(S.activePollutant||"No pollutant")+" · "+(S.mapInventory||"No inventory")+" · t/year";
  d3.select("#worldMap").selectAll("path.map-country").attr("fill",f=>{const v=byISO.get(String(f.id||f.properties?.ISO_A3||"").toUpperCase())??byName.get(canon(f.properties?.name));return v===undefined?"#344b60":v===0?"#eef1f3":scale(Math.max(v,lower))});
  $("mapCount").textContent=byISO.size+" countries with observations";
 }
