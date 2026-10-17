@@ -27,7 +27,7 @@ def run(zippath,geopath,out):
  if len(polys)<150:raise ValueError('Too few countries in POPs Atlas map')
  tree=STRtree(polys)
  with zipfile.ZipFile(zippath) as z:
-  files={m.group(1):n for n in z.namelist() if (m:=re.match(r'^(PCB\\d+|Sum22)Grid ',n))}
+  files={m.group(1):n for n in z.namelist() if (m:=re.match(r'^(PCB\d+|Sum22)Grid ',n))}
   if len(files)!=23 or 'PCB28' not in files or 'Sum22' not in files:raise ValueError('Unexpected inventory files')
   ref=pd.read_csv(z.open(files['PCB28']));years=[int(x) for x in ref.columns[2:]]
   if years!=list(range(1930,2101)):raise ValueError('Unexpected year range')
