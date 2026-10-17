@@ -1,0 +1,33 @@
+name: Build Breivik Default inventory
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/prepare_breivik_default.py
+      - .github/workflows/build-breivik-default.yml
+permissions:
+  contents: write
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check numpy pandas shapely
+      - name: Download official Breivik Default archive
+        run: |
+          curl --fail --location --retry 3 --max-time 240 -o Default.zip https://projects.nilu.no/globalpcb/download/1205.zip
+          echo '02d821c09c7629d2fd3a83688d58828fe9795636ab3010f0fc517a5cd7d1b29d  Default.zip' | sha256sum -c -
+      - name: Rebuild with exact published country geometry
+        run: python scripts/prepare_breivik_default.py --zip Default.zip --boundaries data/boundaries/world_india.geojson --out data/breivik/default
+      - name: Commit validated country-year datasets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/breivik/default
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish validated Breivik Default PCB inventory using exact atlas boundaries"
+            git push
+          fi
