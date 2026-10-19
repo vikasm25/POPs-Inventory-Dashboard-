@@ -4,7 +4,17 @@ const $=id=>document.getElementById(id),norm=s=>String(s??"").toLowerCase().repl
 const SECTORS=["Power Industry","Industrial combustion","Buildings","Transport","Agriculture","Fuel exploitation","Processes","Waste"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
 // Use the official EDGAR v8.1 POPs category names across controls and charts.
 const EDGAR_SECTORS=SECTORS, BREIVIK_SECTOR="Not sector-resolved";
-function edgarSectorLabel(source){return({"Industrial Combustion":"Industrial combustion","Fuel Exploitation":"Fuel exploitation"})[source]||source;}
+const EDGAR_SECTOR_DESCRIPTIONS={
+ "Power Industry":"Power and heat generation plants (public and autoproducers)",
+ "Industrial combustion":"Combustion for industrial manufacturing",
+ "Buildings":"Small-scale non-industrial stationary combustion",
+ "Transport":"Mobile combustion (road, rail, ship and aviation)",
+ "Agriculture":"Agricultural soils, crop-residue burning, enteric fermentation and manure management",
+ "Fuel exploitation":"Production, transformation and refining of fuels",
+ "Processes":"Industrial processes including cement, iron and steel, aluminum, chemicals and solvents",
+ "Waste":"Solid-waste disposal and wastewater treatment"
+};
+function edgarSectorLabel(source){return EDGAR_SECTOR_DESCRIPTIONS[source]?source:source;}
 const special={unitedstatesofamerica:"unitedstates",russianfederation:"russia",czechia:"czechrepublic",republicofkorea:"southkorea",vietnam:"vietnam"};const canon=s=>special[norm(s)]||norm(s);
 const DEMO_COUNTRIES=[["China","CHN","Asia",12100],["United States","USA","North America",8500],["India","IND","Asia",4200],["Russia","RUS","Europe",3500],["Japan","JPN","Asia",2210],["Germany","DEU","Europe",1760],["Brazil","BRA","South America",1310],["United Kingdom","GBR","Europe",1050],["France","FRA","Europe",940],["Canada","CAN","North America",870],["Australia","AUS","Oceania",490],["South Africa","ZAF","Africa",710],["Nigeria","NGA","Africa",460],["Argentina","ARG","South America",280],["Chile","CHL","South America",85],["Iceland","ISL","Europe",.12],["Luxembourg","LUX","Europe",.18],["New Zealand","NZL","Oceania",.25]];
 const DEMO_INVENTORIES=["EDGAR","Breivik"];
@@ -55,7 +65,7 @@ function options(){
  $("sourceRetry").hidden=!(S.sectorLoadError&&S.mapInventory==="EDGAR");
  const root=$("sectorOptions");root.replaceChildren();
  sectors.forEach(sector=>{
-  const label=document.createElement("label");label.className="choice-row";label.title=sector;
+  const label=document.createElement("label");label.className="choice-row";label.title=EDGAR_SECTOR_DESCRIPTIONS[sector]||sector;
   const input=document.createElement("input");input.type="checkbox";input.checked=S.sectors.has(sector);
   if(S.mapInventory==="EDGAR"&&!loading&&!S.sectorLoadError&&available.size&&!available.has(sector))label.classList.add("source-unreported");
   input.addEventListener("change",()=>{input.checked?S.sectors.add(sector):S.sectors.delete(sector);S.sectorsCleared=S.sectors.size===0;S.scaleCache=null;render()});
