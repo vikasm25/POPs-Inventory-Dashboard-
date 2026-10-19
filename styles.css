@@ -598,4 +598,9 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
 @media(min-width:851px){
   .top-grid{align-items:stretch!important}
   .top-grid>.map-panel,.top-grid>.controls-panel{height:100%!important;align-self:stretch!important}
+  .top-grid>.map-panel{display:flex;flex-direction:column}
+  .top-grid>.map-panel .map-stage{display:flex;flex:1;min-height:0}
+  .top-grid>.map-panel .map-frame{flex:1;height:100%!important}
+  .top-grid>.map-panel .map-viewport{height:100%!important;aspect-ratio:auto!important}
+  .top-grid>.map-panel .map-viewport svg{height:100%!important}
 }
