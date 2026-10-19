@@ -521,3 +521,24 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
 @media(min-width:1550px){
   .bottom-grid{grid-template-columns:minmax(0,1.65fr) minmax(410px,1fr)!important}
 }
+
+/* Laptop layout: use the space beside the map for the control and KPI cards. */
+.overview-layout{min-width:0}
+@media(min-width:851px) and (max-width:2200px){
+  .overview-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,360px);gap:14px;align-items:start}
+  .overview-layout>.top-grid{display:contents}
+  .overview-layout>.top-grid>.map-panel{grid-column:1;grid-row:1 / span 2}
+  .overview-layout>.top-grid>.controls-panel{grid-column:2;grid-row:1}
+  .overview-layout>.stats-strip{grid-column:2;grid-row:2;margin:0;min-width:0}
+  .overview-layout>.stats-strip>.kpi-panel{display:block;padding:16px}
+  .overview-layout>.stats-strip .panel-heading{margin-bottom:12px}
+  .overview-layout>.stats-strip .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}
+  .overview-layout>.stats-strip .kpi{min-height:92px;padding:11px 10px}
+  .overview-layout>.stats-strip .kpi strong{font-size:22px}
+}
+@media(min-width:1200px) and (max-width:2200px){
+  .overview-layout{grid-template-columns:minmax(0,1fr) minmax(340px,390px)}
+}
+@media(max-width:850px){
+  .overview-layout{display:block}
+}
