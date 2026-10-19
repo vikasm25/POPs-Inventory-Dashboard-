@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="./styles.css?v=info-pages-20261019-1"/>
+<link rel="stylesheet" href="./styles.css?v=analysis-workbench-20261020-15"/>
 <script defer src="./pages.js?v=info-pages-20261019-1"></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -18,7 +18,7 @@
 <div class="app-shell">
 <header class="topbar">
   <div class="brand">
-    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M25.4 5.3C12.8 4 5.6 9.8 5.8 19c.2 7.3 9 9.9 13.3 5.8 4-3.9 3.4-9.5 6.3-19.5Z" fill="currentColor" opacity=".92"/><path d="M5.2 27.4c5.3-8.5 10.1-12.8 17.1-16.2" stroke="#08251a" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="14" fill="currentColor" opacity=".14"/><circle cx="18" cy="18" r="13.2" stroke="currentColor" stroke-width="1.8"/><path d="M5.4 18h25.2M7.8 11.4h20.4M7.8 24.6h20.4M18 4.8c3.9 3.6 5.8 8 5.8 13.2S21.9 27.6 18 31.2M18 4.8c-3.9 3.6-5.8 8-5.8 13.2s1.9 9.6 5.8 13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" opacity=".82"/><path d="M10.6 13.1c1.8-1.3 3.1-.2 4.5-.5l1.8 1.7-.8 2.3-2.7.7-1.5 2.5-2.8-1.1-.4-2.7Z" fill="currentColor" opacity=".8"/></svg></div>
     <div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div>
   </div>
   <div class="top-actions">
@@ -30,48 +30,59 @@
 
 <main class="dashboard info-page">
   <section class="intro">
-    <div><p class="eyebrow">USER GUIDE / DASHBOARD WORKFLOW</p><h1>How to Use <span>POPs Atlas</span></h1><p>Move from inventory selection to defensible interpretation with a clear, repeatable workflow.</p></div>
+    <div><p class="eyebrow">USER GUIDE / DASHBOARD WORKFLOW</p><h1>How to Use <span>POPs Atlas</span></h1><p>Set a clear scope first, then use the map, charts and focused analyses to answer one question at a time.</p></div>
   </section>
 
   <section class="panel info-hero guide-hero">
     <div class="info-hero-copy">
       <p class="info-kicker">START HERE</p>
-      <h2>Explore the atlas in eight connected steps</h2>
-      <p class="info-lead">The map, charts, statistics and exports always use the same active inventory, pollutant, source categories and year.</p>
+      <h2>Build a comparable view before reading a result</h2>
+      <p class="info-lead">The main dashboard keeps the active inventory, scenario, pollutant, source categories and year together. The focused analysis panel uses the same published catalogs but lets you ask a narrower question.</p>
       <div class="info-actions"><a class="info-button" href="./index.html">Open the dashboard <span aria-hidden="true">→</span></a><a class="info-button secondary" href="./references.html">Review data sources</a></div>
     </div>
     <div class="info-hero-side" aria-label="Workflow summary">
-      <div class="info-summary-item"><strong>01</strong><span>Define the inventory and pollutant</span></div>
-      <div class="info-summary-item"><strong>02</strong><span>Explore geography, sources and time</span></div>
-      <div class="info-summary-item"><strong>03</strong><span>Interpret coverage before comparison</span></div>
+      <div class="info-summary-item"><strong>01</strong><span>Define inventory, scenario and pollutant</span></div>
+      <div class="info-summary-item"><strong>02</strong><span>Inspect place, source and year</span></div>
+      <div class="info-summary-item"><strong>03</strong><span>Choose one focused analysis</span></div>
     </div>
   </section>
 
   <div class="info-section-heading">
-    <div><p class="info-kicker">DASHBOARD WORKFLOW</p><h2>From selection to citation</h2></div>
-    <p>Follow the sequence below when starting a new analysis.</p>
+    <div><p class="info-kicker">DASHBOARD WORKFLOW</p><h2>From selection to evidence</h2></div>
+    <p>Use these steps in order when starting a new question.</p>
   </div>
 
   <section class="guide-steps" aria-label="Step-by-step dashboard guide">
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">01</div><div class="guide-step-copy"><h2>Choose your inventory</h2><p>Select the <b>Inventory</b> dropdown at the top. Every map and chart uses the chosen inventory; inventories are not combined.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">02</div><div class="guide-step-copy"><h2>Choose one pollutant</h2><p>Use the adjacent <b>Pollutant</b> dropdown. Available substances change with the inventory. EDGAR's PCB series is <b>aggregate unintentional PCB</b>, not PCB-28.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">03</div><div class="guide-step-copy"><h2>Set emission sources</h2><p>Check the categories to include in <b>Emission Sources</b>. <b>All</b> restores every category and <b>None</b> clears them. The selection applies across the atlas.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">04</div><div class="guide-step-copy"><h2>Read the map</h2><p>The logarithmic color scale stays fixed across years for the active pollutant and sources. Light means reported zero; gray means no observation. Hover for totals and use the map controls to zoom.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">05</div><div class="guide-step-copy"><h2>Select a location</h2><p>Click a country or table row to view its total and trend. Choose <b>Global</b> to return to reported worldwide totals. The table replaces the map when selected.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">06</div><div class="guide-step-copy"><h2>Explore the timeline</h2><p>Move the year slider or press <b>Play</b>. Playback stops at the final year. Trend lines show the selected source categories across the available record.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">07</div><div class="guide-step-copy"><h2>Interpret the statistics</h2><p>Compare source contributions, continental distribution, leading countries and insights. Shares describe reported observations and may not represent a complete global inventory.</p></div></article>
-    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">08</div><div class="guide-step-copy"><h2>Export and cite</h2><p>Export the active country and source records. Record the inventory, pollutant, year, source selection and units, then consult <a href="./references.html">Data Sources &amp; References</a>.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">01</div><div class="guide-step-copy"><h2>Set the inventory and scenario</h2><p>Choose <b>EDGAR v8.1 POPs</b> or <b>Breivik PCBs</b>. Breivik also asks for Baseline, Default or Worst case. These inventories remain separate and are never added together.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">02</div><div class="guide-step-copy"><h2>Choose one pollutant</h2><p>Available pollutants change with the inventory. EDGAR's <b>PCB (aggregate, unintentional)</b> is an aggregate series, not PCB-28. Breivik lists individual congeners and Σ22 PCBs.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">03</div><div class="guide-step-copy"><h2>Set source categories</h2><p>Use <b>Emission Sources</b> to include the categories you need. <b>All</b> restores every available category and <b>None</b> clears them. Breivik has no source-sector breakdown, so its source card is intentionally unavailable.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">04</div><div class="guide-step-copy"><h2>Read the map and color key</h2><p>The main map uses a logarithmic emissions scale for the active year. Dark gray means no country observation and the light swatch means a reported zero. Hover a country for its value; use the map, table, zoom and reset controls as needed.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">05</div><div class="guide-step-copy"><h2>Move through time</h2><p>Drag the <b>Time explorer</b> slider or press <b>Play</b>. The map, global statistics, source donut, regional chart and country rankings update for the selected year. Playback stops at the final year.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">06</div><div class="guide-step-copy"><h2>Inspect a country or the table</h2><p>Click a map country or table row to update the selected-location card and trend. Click <b>Global ↺</b> to return to reported worldwide totals. Offshore and unassigned records can remain in global totals without appearing as countries.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">07</div><div class="guide-step-copy"><h2>Use the focused analysis panel</h2><p>Scroll to <b>Explore the data</b> and choose the question that matches your task. The controls change to show only the inputs needed for that analysis.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">08</div><div class="guide-step-copy"><h2>Export a reproducible slice</h2><p><b>Export data</b> downloads the active inventory, pollutant, year, country selection and source categories as CSV, including values in tonnes/year. Record those filters with any result you share.</p></div></article>
+  </section>
+
+  <div class="info-section-heading">
+    <div><p class="info-kicker">FOCUSED ANALYSIS</p><h2>Choose the question, then read the matching result</h2></div>
+    <p>Each view keeps the interaction close to the result it explains. The focused analyses use their own selections, so the main map's source checkboxes do not change them. In Compare pollutants, EDGAR sources are summed only within the line where you selected them.</p>
+  </div>
+  <section class="reference-support reference-support--three info-support-grid" aria-label="Focused analysis guide">
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">A</div><div><h2>Compare pollutants</h2><p>Add up to six pollutant series; on wide screens the controls arrange three series per row. Each series names the inventory and pollutant plus its context: choose exactly one Breivik scenario, or select one or more EDGAR source categories whose emissions are summed for that line. The plot keeps only shared years, and hovering by year shows every selected value with its full context.</p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">B</div><div><h2>Find the peak year</h2><p>Choose one inventory, its scenario or EDGAR source total, a pollutant and a selected year. The line marks the highest annual total and the selected year. Hover anywhere on the plot to inspect the annual value at that year.</p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">C</div><div><h2>Spatial year comparison</h2><p>Choose one inventory, its scenario or EDGAR source total, a <b>Reference year</b> and a <b>Target year</b>. The map shows percentage change only for countries observed in both years. Zero is the center of the diverging scale; missing either year is shown as <b>No observation</b> and is excluded from the percentage calculation.</p></div></article>
   </section>
 
   <div class="info-section-heading compact">
-    <div><p class="info-kicker">INTERPRETATION CHECKS</p><h2>Before using the results</h2></div>
+    <div><p class="info-kicker">INTERPRETATION CHECKS</p><h2>Keep these distinctions in view</h2></div>
   </div>
-  <section class="guide-tips info-support-grid">
-    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">A</div><div><h2>Missing is different from zero</h2><p>No observation does not mean zero emissions. POPs Atlas does not fill missing country-year values. A reported zero uses a separate map shade.</p></div></article>
-    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">B</div><div><h2>Comparability requires context</h2><p>Do not combine inventories without harmonizing coverage, pollutant definitions and sector categories. EDGAR PCDD/F toxic-equivalency values are excluded from this mass-based display.</p></div></article>
+  <section class="guide-tips reference-support--three info-support-grid">
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">A</div><div><h2>Missing is different from zero</h2><p>POPs Atlas does not interpolate or fill missing country-year values. A reported zero is a real observation and uses a separate map shade.</p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">B</div><div><h2>Totals describe reported records</h2><p>Global totals and shares summarize loaded observations. They do not prove complete global coverage, and independent inventories should not be combined.</p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">C</div><div><h2>Units and definitions matter</h2><p>Values are tonnes/year. EDGAR PCDD/F toxic-equivalency values are excluded from this mass-based display. Check the inventory notes before comparing substances.</p></div></article>
   </section>
 
-  <footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory and pollutant together when using these data</span></footer>
+  <footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory, scenario, pollutant, year and source filters when citing</span></footer>
 </main>
 </div>
 </body>

@@ -1,4 +1,4 @@
-"""Prepare NILU Breivik Default inventory with the exact POPs Atlas GeoJSON boundaries."""
+"""Prepare a NILU Breivik scenario with the exact POPs Atlas GeoJSON boundaries."""
 import argparse,hashlib,json,re,zipfile,csv
 from collections import Counter
 from pathlib import Path
@@ -6,16 +6,22 @@ import numpy as np,pandas as pd
 from shapely.geometry import Point,box,shape
 from shapely.strtree import STRtree
 from shapely.validation import make_valid
-EXPECTED='02d821c09c7629d2fd3a83688d58828fe9795636ab3010f0fc517a5cd7d1b29d'
+EXPECTED_BY_SCENARIO={
+ 'Baseline':'e61c9d373772970e26aa1b62f7f703475284c9a6b550d4f39fdbf56e5e00ba40',
+ 'Default':'02d821c09c7629d2fd3a83688d58828fe9795636ab3010f0fc517a5cd7d1b29d',
+ 'Worst-case':'e6ff18cedf850f47ccb97855a00f7dac437e04cfe1b04de4264b25c5396353cd',
+}
 def digest(p):
  h=hashlib.sha256()
  with open(p,'rb') as f:
   for b in iter(lambda:f.read(4*1024*1024),b''):h.update(b)
  return h.hexdigest()
 def save(p,o):p.write_text(json.dumps(o,ensure_ascii=False,separators=(',',':'),allow_nan=False),encoding='utf-8')
-def run(zippath,geopath,out):
+def run(zippath,geopath,out,scenario):
  out.mkdir(parents=True,exist_ok=True)
- if digest(zippath)!=EXPECTED:raise ValueError('Unexpected source ZIP SHA256; refuse unverified source')
+ if scenario not in EXPECTED_BY_SCENARIO:raise ValueError('Unsupported scenario '+scenario)
+ expected_sha=EXPECTED_BY_SCENARIO[scenario]
+ if digest(zippath)!=expected_sha:raise ValueError('Unexpected source ZIP SHA256; refuse unverified source')
  geo=json.loads(geopath.read_text(encoding='utf-8'))
  polys=[];isos=[];names=[]
  for f in geo['features']:
@@ -28,7 +34,7 @@ def run(zippath,geopath,out):
  tree=STRtree(polys)
  with zipfile.ZipFile(zippath) as z:
   files={m.group(1):n for n in z.namelist() if (m:=re.match(r'^(PCB\d+|Sum22)Grid ',n))}
-  if len(files)!=23 or 'PCB28' not in files or 'Sum22' not in files:raise ValueError('Unexpected inventory files')
+  if len(files) not in (22,23) or 'PCB28' not in files:raise ValueError('Unexpected inventory files')
   ref=pd.read_csv(z.open(files['PCB28']));years=[int(x) for x in ref.columns[2:]]
   if years!=list(range(1930,2101)):raise ValueError('Unexpected year range')
   assignments=[];methods=[]
@@ -43,11 +49,15 @@ def run(zippath,geopath,out):
    else:assignments.append('ZZZ');methods.append('unassigned')
   assignments=np.array(assignments);codes=sorted(set(assignments));idx={c:np.flatnonzero(assignments==c) for c in codes}
   lookup=dict(zip(isos,names));lookup.update({'USA':'United States','RUS':'Russia','GBR':'United Kingdom','KOR':'South Korea','PRK':'North Korea','CZE':'Czechia','TUR':'Türkiye','VNM':'Vietnam','COD':'Democratic Republic of the Congo','COG':'Republic of the Congo','ZZZ':'Unassigned grid cells'})
-  qa=pd.read_csv(z.open('GlobalEmissionsQAQC 12OB 5X.txt')).set_index('Year')
-  catalog={'schema':1,'inventory':'Breivik','scenario':'Default','source':'https://projects.nilu.no/globalpcb/','doi':'https://doi.org/10.1021/acs.est.5b04226','source_archive_sha256':EXPECTED,'boundary_sha256':digest(geopath),'years':[1930,2100],'units':'tonnes/year','sector_resolution':False,'country_assignment':'POPs Atlas exact map, center point then greatest intersecting land area; unassigned preserved as ZZZ','pollutants':{}}
+  qa_name=next((n for n in z.namelist() if n.startswith('GlobalEmissionsQAQC ')),None)
+  if not qa_name:raise ValueError('Missing GlobalEmissionsQAQC file')
+  qa=pd.read_csv(z.open(qa_name)).set_index('Year')
+  catalog={'schema':1,'inventory':'Breivik','scenario':scenario,'source':'https://projects.nilu.no/globalpcb/','doi':'https://doi.org/10.1021/acs.est.5b04226','source_archive_sha256':expected_sha,'boundary_sha256':digest(geopath),'years':[1930,2100],'units':'tonnes/year','sector_resolution':False,'country_assignment':'POPs Atlas exact map, center point then greatest intersecting land area; unassigned preserved as ZZZ','pollutants':{}}
   reports=[];totals={};sum22=np.zeros((len(ref),len(years)))
   for key in sorted((k for k in files if k!='Sum22'),key=lambda k:int(k[3:]))+['Sum22']:
-   df=ref if key=='PCB28' else pd.read_csv(z.open(files[key]))
+   df=ref if key=='PCB28' else (pd.DataFrame(sum22,columns=ref.columns[2:]) if key=='Sum22' and key not in files else pd.read_csv(z.open(files[key])))
+   if key=='Sum22' and key not in files:
+    df.insert(0,'Long',ref['Long']);df.insert(0,'Lat',ref['Lat'])
    if df.shape!=ref.shape or not np.array_equal(df[['Lat','Long']].to_numpy(),ref[['Lat','Long']].to_numpy()):raise ValueError('Coordinate mismatch '+key)
    values=df.iloc[:,2:].to_numpy(dtype=float)
    if not np.isfinite(values).all() or (values<0).any():raise ValueError('Invalid values '+key)
@@ -56,18 +66,18 @@ def run(zippath,geopath,out):
    if not np.allclose(total,np.stack(list(groups.values())).sum(axis=0),rtol=1e-11,atol=1e-11):raise ValueError('Mass conservation '+key)
    records=[[lookup.get(c,c),c,y,'Not sector-resolved',float(v)] for c in codes for y,v in zip(years,groups[c]) if v>0]
    label='Σ22 PCBs (Breivik)' if key=='Sum22' else 'PCB-'+key[3:]
-   save(out/(key+'.json'),{'schema':1,'inventory':'Breivik','scenario':'Default','pollutant':key,'display_name':label,'units':'tonnes/year','years':[1930,2100],'sector_resolution':False,'records':records})
-   catalog['pollutants'][key]={'path':'data/breivik/default/'+key+'.json','display_name':label,'records':len(records),'units':'tonnes/year','kind':'sum_of_22_congeners' if key=='Sum22' else 'individual_congener'}
+   save(out/(key+'.json'),{'schema':1,'inventory':'Breivik','scenario':scenario,'pollutant':key,'display_name':label,'units':'tonnes/year','years':[1930,2100],'sector_resolution':False,'records':records})
+   catalog['pollutants'][key]={'path':'data/breivik/'+out.name+'/'+key+'.json','display_name':label,'records':len(records),'units':'tonnes/year','kind':'sum_of_22_congeners' if key=='Sum22' else 'individual_congener'}
    qkey=key.replace('PCB','PCB-') if key!='Sum22' else key
    for i,y in enumerate(years):
     observed=float(total[i]);source=float(qa.at[y,qkey]);unassigned=float(groups.get('ZZZ',np.zeros(len(years)))[i])
     reports.append([key,y,observed,source,observed-source,unassigned,100*unassigned/observed if observed else 0])
   i=years.index(2016)
-  if abs(totals['PCB28'][i]-18.8991789455)>1e-5 or abs(totals['Sum22'][i]-167.392218388)>1e-5:raise ValueError('2016 source QA failed')
+  if not np.isfinite(totals['Sum22']).all() or (totals['Sum22']<0).any():raise ValueError('Invalid Sum22 totals')
   save(out/'manifest.json',catalog)
   with (out/'qa_global_annual.csv').open('w',newline='') as f:
    w=csv.writer(f);w.writerow(['pollutant','year','grid_total_tonnes','source_QA_rounded_tonnes','difference_tonnes','unassigned_tonnes','unassigned_percent']);w.writerows(reports)
-  save(out/'qa_metadata.json',{'source_sha256':EXPECTED,'boundary_sha256':digest(geopath),'grid_cells':len(ref),'assignment_methods':dict(Counter(methods)),'country_count':len(codes)-int('ZZZ' in codes),'max_QA_difference_percent':max(100*abs(r[4])/r[2] for r in reports if r[2]>0),'max_Sum22_difference_percent':float(np.max(np.abs(totals['Sum22']-sum22.sum(axis=0))/np.maximum(totals['Sum22'],1e-15))*100),'PCB28_2016_tonnes':float(totals['PCB28'][i]),'Sum22_2016_tonnes':float(totals['Sum22'][i]),'limitations':['Border and coastal grid cells assigned wholly to one country','ZZZ is unassigned, included in global totals only','Breivik provides no sector split','Source includes scenario projections']})
-  print('SUCCESS: 23 pollutants; 2016 PCB28',totals['PCB28'][i],'Sum22',totals['Sum22'][i])
+  save(out/'qa_metadata.json',{'scenario':scenario,'source_sha256':expected_sha,'boundary_sha256':digest(geopath),'grid_cells':len(ref),'assignment_methods':dict(Counter(methods)),'country_count':len(codes)-int('ZZZ' in codes),'max_QA_difference_percent':max(100*abs(r[4])/r[2] for r in reports if r[2]>0),'max_Sum22_difference_percent':float(np.max(np.abs(totals['Sum22']-sum22.sum(axis=0))/np.maximum(totals['Sum22'],1e-15))*100),'PCB28_2016_tonnes':float(totals['PCB28'][i]),'Sum22_2016_tonnes':float(totals['Sum22'][i]),'limitations':['Border and coastal grid cells assigned wholly to one country','ZZZ is unassigned, included in global totals only','Breivik provides no sector split','Source includes scenario projections']})
+  print('SUCCESS:',scenario,'23 pollutants; 2016 PCB28',totals['PCB28'][i],'Sum22',totals['Sum22'][i])
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--zip',required=True,type=Path);p.add_argument('--boundaries',required=True,type=Path);p.add_argument('--out',required=True,type=Path);a=p.parse_args();run(a.zip,a.boundaries,a.out)
+ p=argparse.ArgumentParser();p.add_argument('--zip',required=True,type=Path);p.add_argument('--boundaries',required=True,type=Path);p.add_argument('--out',required=True,type=Path);p.add_argument('--scenario',required=True,choices=sorted(EXPECTED_BY_SCENARIO));a=p.parse_args();run(a.zip,a.boundaries,a.out,a.scenario)

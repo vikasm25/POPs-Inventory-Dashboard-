@@ -9,15 +9,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="./styles.css?v=responsive-audit-20261019-7"/>
+<link rel="stylesheet" href="./styles.css?v=analysis-workbench-20261020-15"/>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
-<script src="./app.js?v=responsive-audit-20261019-7" defer></script>
+<script src="./app.js?v=analysis-workbench-20261020-15" defer></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script><script defer src="/_vercel/insights/script.js"></script></head>
 <body>
 <div class="app-shell">
 <header class="topbar">
   <div class="brand">
-    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M25.4 5.3C12.8 4 5.6 9.8 5.8 19c.2 7.3 9 9.9 13.3 5.8 4-3.9 3.4-9.5 6.3-19.5Z" fill="currentColor" opacity=".92"/><path d="M5.2 27.4c5.3-8.5 10.1-12.8 17.1-16.2" stroke="#08251a" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="14" fill="currentColor" opacity=".14"/><circle cx="18" cy="18" r="13.2" stroke="currentColor" stroke-width="1.8"/><path d="M5.4 18h25.2M7.8 11.4h20.4M7.8 24.6h20.4M18 4.8c3.9 3.6 5.8 8 5.8 13.2S21.9 27.6 18 31.2M18 4.8c-3.9 3.6-5.8 8-5.8 13.2s1.9 9.6 5.8 13.2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" opacity=".82"/><path d="M10.6 13.1c1.8-1.3 3.1-.2 4.5-.5l1.8 1.7-.8 2.3-2.7.7-1.5 2.5-2.8-1.1-.4-2.7Z" fill="currentColor" opacity=".8"/></svg></div>
     <div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div>
   </div>
   <div class="top-actions">
@@ -34,10 +34,14 @@
   </section>
 
 
-  <section class="filter-strip inventory-filters" aria-label="Emissions data selection">
+  <section class="filter-strip inventory-filters" id="filterStrip" aria-label="Emissions data selection">
     <div class="filter-field">
       <label for="inventorySelect">Inventory</label>
       <div class="select-wrap"><select id="inventorySelect" aria-label="Select emissions inventory"></select><span class="chevron" aria-hidden="true">⌄</span></div>
+    </div>
+    <div class="filter-field scenario-field" id="scenarioField" hidden>
+      <label for="scenarioSelect">Breivik scenario</label>
+      <div class="select-wrap"><select id="scenarioSelect" aria-label="Select Breivik emissions scenario"></select><span class="chevron" aria-hidden="true">⌄</span></div>
     </div>
     <div class="filter-field pollutant-field">
       <label for="pollutantSelect">Pollutant</label>
@@ -112,7 +116,24 @@
       <article class="panel insights-panel"><div class="panel-heading"><div><span class="section-icon">↗</span><div><h2>Emissions Insights</h2><p>Concentration, sector dominance and long-term change</p></div></div></div><div class="insights-grid"><div class="insight"><small>Top 3 countries' share</small><strong id="insightTop3">—</strong><span>of reported global emissions</span></div><div class="insight"><small>Largest source category</small><strong class="insight-text" id="insightSector">—</strong><span id="insightSectorShare">—</span></div><div class="insight"><small>Change since first reported year</small><strong id="insightLongChange">—</strong><span id="insightPeriod">—</span></div><div class="insight"><small>Countries reporting positive emissions</small><strong id="insightPositive">—</strong><span>excludes reported zero values</span></div></div></article>
     </div>
   </section>
-  <div hidden id="methodology"><span id="coverageBadge"></span><span id="coverageYears"></span><span id="coverageRows"></span><span id="uploadMessage" role="status"></span><span id="boundaryStatus"></span><input id="csvUpload" type="file" accept=".csv" multiple/><input id="boundaryUpload" type="file" accept=".geojson,.json"/><button id="clearImports" type="button"></button></div>
+  <section class="analysis-workbench panel" id="analysisWorkbench" aria-label="Focused analysis">
+    <div class="panel-heading"><div><span class="section-icon">⌘</span><div><h2>Explore the data</h2><p id="analysisDescription">Choose one question and get a focused answer from the selected inventory.</p></div></div><span class="tiny-pill">FOCUSED VIEWS</span></div>
+    <div class="analysis-controls" id="analysisControls">
+      <div class="analysis-field analysis-question-field"><label for="analysisMode">Question</label><div class="select-wrap"><select id="analysisMode" aria-label="Select analysis question"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+      <div class="analysis-field"><label for="analysisInventory">Inventory</label><div class="select-wrap"><select id="analysisInventory" aria-label="Select analysis inventory"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+      <div class="analysis-field" id="analysisContextField" hidden><label id="analysisContextLabel">Context</label><div id="analysisContextControl"></div></div>
+      <div class="analysis-field"><label for="analysisPollutant">Pollutant</label><div class="select-wrap"><select id="analysisPollutant" aria-label="Select analysis pollutant"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+      <div class="analysis-field"><label for="analysisYear">Year</label><div class="select-wrap"><select id="analysisYear" aria-label="Select analysis year"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+<div class="analysis-field analysis-series-field" id="analysisSeriesField" hidden><label>Pollutant series (up to 6 · three per row)</label><div id="analysisSeriesRows" class="analysis-series-rows"></div><button type="button" id="analysisAddSeries" class="analysis-add-series">+ Add pollutant series</button></div>
+      <div class="analysis-field analysis-secondary-field" id="analysisCompareYearField" hidden><label for="analysisCompareYear">Compare year</label><div class="select-wrap"><select id="analysisCompareYear" aria-label="Select comparison year"></select><span class="chevron" aria-hidden="true">⌄</span></div></div>
+    </div>
+    <div id="analysisStatus" class="analysis-status" role="status">Select an analysis to begin.</div>
+    <div id="analysisLead" class="analysis-lead" hidden></div>
+    <div id="analysisSummary" class="analysis-summary-grid"></div>
+    <div id="analysisChart" class="analysis-chart" aria-live="polite"></div>
+    <p id="analysisNote" class="panel-footnote"></p>
+  </section>
+  <div hidden id="methodology"><span id="coverageBadge"></span><span id="coverageYears"></span><span id="coverageRows"></span><span id="uploadMessage" role="status"></span><span id="boundaryStatus"></span></div>
   <footer><span>POPs Atlas • Global emissions explorer</span><span><a href="./how-to-use.html">How to Use</a> · <a href="./about.html">About</a> · <a href="./references.html">Data Sources &amp; References</a></span></footer>
 </main>
 </div>
