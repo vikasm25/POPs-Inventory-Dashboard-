@@ -1,7 +1,7 @@
 /* POPs Atlas | source-specific country inventory explorer */
 (()=>{"use strict";
 const $=id=>document.getElementById(id),norm=s=>String(s??"").toLowerCase().replace(/[^a-z0-9]/g,""),fmt=v=>Number.isFinite(v)?v.toLocaleString("en-US",{maximumFractionDigits:v<1?5:2}):"—",esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const SECTORS=["Power Industry","Industrial combustion","Buildings","Transport","Agriculture","Fuel exploitation","Processes","Waste"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
+const SECTORS=["Power industry","Oil refineries & Transformation industry","Combustion for manufacturing","Road transportation","Railways, pipelines, off-road transport","Shipping","Energy for buildings","Iron and steel production","Non-ferrous metals production","Agricultural waste burning","Solid waste incineration"],COLORS=["#36a8ff","#ff9d58","#65d5a4","#ecc960","#ad87f9","#eb73ab","#4bc9d3","#fc707a"],REGIONS=["Asia","Europe","Africa","North America","South America","Oceania"];
 // Use the official EDGAR v8.1 POPs category names across controls and charts.
 const EDGAR_SECTORS=SECTORS, BREIVIK_SECTOR="Not sector-resolved";
 const EDGAR_SECTOR_DESCRIPTIONS={
