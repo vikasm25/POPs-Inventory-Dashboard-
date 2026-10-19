@@ -588,3 +588,8 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
   .overview-layout>.top-grid{display:grid}
   .overview-layout>.stats-strip{display:block;margin-bottom:18px}
 }
+@media(min-width:1201px){
+  .overview-layout>.stats-strip>.kpi-panel{display:grid;grid-template-columns:minmax(180px,225px) minmax(0,1fr);gap:16px;align-items:center}
+  .overview-layout>.stats-strip .panel-heading{margin:0}
+  .overview-layout>.stats-strip .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px}
+}
