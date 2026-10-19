@@ -22,7 +22,7 @@ jobs:
           curl --fail --location --retry 5 --retry-all-errors --connect-timeout 30 --max-time 600 -o Default.zip https://projects.nilu.no/globalpcb/download/1205.zip
           echo '02d821c09c7629d2fd3a83688d58828fe9795636ab3010f0fc517a5cd7d1b29d  Default.zip' | sha256sum -c -
       - name: Rebuild with exact published country geometry
-        run: python scripts/prepare_breivik_default.py --zip Default.zip --boundaries data/boundaries/world_india.geojson --out data/breivik/default
+        run: python scripts/prepare_breivik_default.py --zip Default.zip --scenario Default --boundaries data/boundaries/world_india.geojson --out data/breivik/default
       - name: Verify all 23 published files
         run: |
           python - <<'PY'
