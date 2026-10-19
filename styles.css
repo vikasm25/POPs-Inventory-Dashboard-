@@ -542,3 +542,25 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
 @media(max-width:850px){
   .overview-layout{display:block}
 }
+
+/* Mobile map: give the map a taller touch target and readable geography. */
+@media(max-width:700px){
+  .map-frame .map-viewport{aspect-ratio:1.55!important;align-self:stretch}
+  .map-frame .map-viewport svg{height:100%!important;width:100%;object-fit:contain}
+}
+@media(max-width:380px){
+  .map-frame .map-viewport{aspect-ratio:1.45!important}
+}
+
+/* Mobile map: use the full card width; keep the scale as an overlay. */
+@media(max-width:700px){
+  .map-frame{display:block!important;position:relative!important}
+  .map-frame .map-viewport{width:100%;aspect-ratio:1000/465!important}
+  .map-frame .map-legend{position:absolute!important;left:8px;top:8px;width:84px!important;z-index:3}
+}
+@media(max-width:700px){
+  .map-frame .map-legend{width:70px!important;padding:6px 4px!important;opacity:.9}
+  .map-frame .map-legend .legend-title{font-size:10px!important}
+  .map-frame .map-legend .legend-number{font-size:9px!important}
+  .map-frame .map-legend .legend-empty{font-size:9px!important}
+}
