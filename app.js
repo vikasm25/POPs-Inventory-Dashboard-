@@ -203,7 +203,7 @@ function drawMap(){
   .attr("text-anchor","middle").text(d=>d[0]);
  if(!S.mapZoomBehavior)S.mapZoomBehavior=d3.zoom().filter(e=>e.type==="wheel"?!e.ctrlKey:e.type==="touchstart"?e.touches.length>1:!e.button).scaleExtent([1,8]).translateExtent([[0,0],[1000,465]]).extent([[0,0],[1000,465]]).on("zoom",e=>{S.mapTransform=e.transform;svg.select(".map-contents").attr("transform",e.transform)});
  svg.call(S.mapZoomBehavior).on("dblclick.zoom",null);svg.call(S.mapZoomBehavior.transform,S.mapTransform||d3.zoomIdentity);
- $("legendScale").style.background="linear-gradient(to top,"+MAP_COLORS.join(",")+")";
+ $("legendScale").style.background="linear-gradient("+(window.matchMedia("(max-width:700px)").matches?"to right":"to top")+","+MAP_COLORS.join(",")+")";
  $("legendScale").title="Logarithmic scale fixed across years; upper bound at the 98th percentile of positive country-year totals";
  updateMapYear();
  updateLocationSummary();
@@ -386,8 +386,10 @@ async function loadOneBreivikPollutant(code){
 let compactChartLayout=window.matchMedia("(max-width:700px)").matches;
 window.addEventListener("resize",()=>{
  const nextCompactLayout=window.matchMedia("(max-width:700px)").matches;
- if(nextCompactLayout===compactChartLayout||!S.records.length)return;
+ if(nextCompactLayout===compactChartLayout)return;
  compactChartLayout=nextCompactLayout;
+ $("legendScale").style.background="linear-gradient("+(compactChartLayout?"to right":"to top")+","+MAP_COLORS.join(",")+")";
+ if(!S.records.length)return;
  linePlot();
  region();
 });
