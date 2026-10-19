@@ -510,3 +510,14 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
  .info-page .about-hero-heading h2{max-width:none;margin-top:9px}
  .info-page .about-hero-body p{font-size:14px;line-height:1.7}
 }
+
+/* Compact card spacing: keep visual grouping while giving charts more usable width. */
+@media(min-width:851px){
+  .top-grid,.mid-grid{gap:14px;margin-bottom:14px}
+  .bottom-grid{grid-template-columns:minmax(0,1.55fr) minmax(360px,1fr)!important;gap:14px!important}
+  .analytics-column{gap:14px}
+  .panel{padding:18px}
+}
+@media(min-width:1550px){
+  .bottom-grid{grid-template-columns:minmax(0,1.65fr) minmax(410px,1fr)!important}
+}
