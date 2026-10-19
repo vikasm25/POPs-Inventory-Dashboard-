@@ -1,10 +1,78 @@
-<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#081727"/><link rel="stylesheet" href="./styles.css"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/><script defer src="./pages.js"></script><title>How to Use | POPs Atlas</title><script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script><script defer src="/_vercel/insights/script.js"></script></head><body><div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-symbol">◎</div><div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div></div><div class="top-actions"><nav class="site-nav" aria-label="Main navigation"><a href="./index.html" >Home</a><a href="./how-to-use.html" aria-current="page">How to Use</a><a href="./about.html">About</a><a href="./references.html" >Sources</a></nav><button id="themeToggle" class="top-icon" aria-label="Toggle dark/light mode"><span class="theme-caption">Dark</span></button></div></header><main class="dashboard info-page"><div class="intro"><div><p class="eyebrow">USER GUIDE</p><h1>How to Use <span>POPs Atlas</span></h1><p>A guided explanation of the map, filtering, emissions comparisons and interpretation.</p></div></div>
-<section class="guide-intro panel"><div class="guide-kicker">START HERE</div><h2>Explore the data in eight steps</h2><p>Work from inventory selection to interpretation. Every filter is shared by the map, charts and exported records.</p><a class="guide-home-link" href="./index.html">Open the dashboard →</a></section>
-<section class="guide-steps" aria-label="Step-by-step dashboard guide"><article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">01</div><div class="guide-step-copy"><h2>Choose your inventory</h2><p>Select the <b>Inventory</b> dropdown at the top. Every map and chart uses the chosen inventory; inventories are not combined.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">02</div><div class="guide-step-copy"><h2>Choose one pollutant</h2><p>Use the adjacent <b>Pollutant</b> dropdown. The available substances change with the inventory. EDGAR's PCB series is <b>aggregate unintentional PCB</b>, not PCB-28.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">03</div><div class="guide-step-copy"><h2>Set emission sources</h2><p>In the <b>Emission Sources</b> panel, check the categories to include. <b>All</b> restores all categories; <b>None</b> clears them. The choices apply to every chart.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">04</div><div class="guide-step-copy"><h2>Read the map</h2><p>The color bar is a logarithmic scale held fixed across years for a given pollutant and source selection. Light means reported zero; gray means no observation. Hover for country totals. Zoom with +/− and drag to pan on desktop; scroll the page normally on mobile.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">05</div><div class="guide-step-copy"><h2>Select a location</h2><p>Click a country or table row to view its total and trend. Choose <b>Global</b> to return to reported worldwide totals. The table replaces the map when selected.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">06</div><div class="guide-step-copy"><h2>Explore the timeline</h2><p>Move the year slider or press <b>Play</b>. Playback stops automatically at the final year. Trend lines show the selected emission sources over the available years.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">07</div><div class="guide-step-copy"><h2>Interpret the statistics</h2><p>Explore <b>Top Polluters</b>, source-category contributions, continental distribution and the insights. Country shares refer to the sum of reported observations, not necessarily a complete global inventory.</p></div></article>
-<article class="guide-step panel"><div class="guide-step-number" aria-hidden="true">08</div><div class="guide-step-copy"><h2>Export and cite</h2><p>Use <b>Export data</b> to download the current filtered country/source records. Record inventory, pollutant, year, source selection and tonnes/year, then consult <a href="./references.html">Data Sources &amp; References</a>.</p></div></article></section><section class="guide-tips"><article class="panel"><h2>Understanding missing observations</h2><p>No observation does not mean zero emissions. The dashboard never fills missing country-year values with zero. A reported zero has a separate map shade.</p></article><article class="panel"><h2>Comparability matters</h2><p>Do not combine inventories without harmonizing coverage, pollutant definitions and sector categories. EDGAR PCDD/F toxic-equivalency values are excluded from this mass-based display.</p></article></section><footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory and pollutant together when using these data</span></footer></main></div></body></html>
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Learn how to explore inventories, pollutants, source categories, maps, trends and exports in POPs Atlas."/>
+<meta name="theme-color" content="#081727"/>
+<title>How to Use | POPs Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./styles.css?v=info-pages-20261019-1"/>
+<script defer src="./pages.js?v=info-pages-20261019-1"></script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M25.4 5.3C12.8 4 5.6 9.8 5.8 19c.2 7.3 9 9.9 13.3 5.8 4-3.9 3.4-9.5 6.3-19.5Z" fill="currentColor" opacity=".92"/><path d="M5.2 27.4c5.3-8.5 10.1-12.8 17.1-16.2" stroke="#08251a" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+    <div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div>
+  </div>
+  <div class="top-actions">
+    <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
+    <nav class="site-nav" aria-label="Main navigation"><a href="./index.html">Home</a><a href="./how-to-use.html" aria-current="page">How to Use</a><a href="./about.html">About</a><a href="./references.html">Sources</a></nav>
+    <button id="themeToggle" class="top-icon" type="button" aria-label="Switch color theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
+  </div>
+</header>
+
+<main class="dashboard info-page">
+  <section class="intro">
+    <div><p class="eyebrow">USER GUIDE / DASHBOARD WORKFLOW</p><h1>How to Use <span>POPs Atlas</span></h1><p>Move from inventory selection to defensible interpretation with a clear, repeatable workflow.</p></div>
+  </section>
+
+  <section class="panel info-hero guide-hero">
+    <div class="info-hero-copy">
+      <p class="info-kicker">START HERE</p>
+      <h2>Explore the atlas in eight connected steps</h2>
+      <p class="info-lead">The map, charts, statistics and exports always use the same active inventory, pollutant, source categories and year.</p>
+      <div class="info-actions"><a class="info-button" href="./index.html">Open the dashboard <span aria-hidden="true">→</span></a><a class="info-button secondary" href="./references.html">Review data sources</a></div>
+    </div>
+    <div class="info-hero-side" aria-label="Workflow summary">
+      <div class="info-summary-item"><strong>01</strong><span>Define the inventory and pollutant</span></div>
+      <div class="info-summary-item"><strong>02</strong><span>Explore geography, sources and time</span></div>
+      <div class="info-summary-item"><strong>03</strong><span>Interpret coverage before comparison</span></div>
+    </div>
+  </section>
+
+  <div class="info-section-heading">
+    <div><p class="info-kicker">DASHBOARD WORKFLOW</p><h2>From selection to citation</h2></div>
+    <p>Follow the sequence below when starting a new analysis.</p>
+  </div>
+
+  <section class="guide-steps" aria-label="Step-by-step dashboard guide">
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">01</div><div class="guide-step-copy"><h2>Choose your inventory</h2><p>Select the <b>Inventory</b> dropdown at the top. Every map and chart uses the chosen inventory; inventories are not combined.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">02</div><div class="guide-step-copy"><h2>Choose one pollutant</h2><p>Use the adjacent <b>Pollutant</b> dropdown. Available substances change with the inventory. EDGAR's PCB series is <b>aggregate unintentional PCB</b>, not PCB-28.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">03</div><div class="guide-step-copy"><h2>Set emission sources</h2><p>Check the categories to include in <b>Emission Sources</b>. <b>All</b> restores every category and <b>None</b> clears them. The selection applies across the atlas.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">04</div><div class="guide-step-copy"><h2>Read the map</h2><p>The logarithmic color scale stays fixed across years for the active pollutant and sources. Light means reported zero; gray means no observation. Hover for totals and use the map controls to zoom.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">05</div><div class="guide-step-copy"><h2>Select a location</h2><p>Click a country or table row to view its total and trend. Choose <b>Global</b> to return to reported worldwide totals. The table replaces the map when selected.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">06</div><div class="guide-step-copy"><h2>Explore the timeline</h2><p>Move the year slider or press <b>Play</b>. Playback stops at the final year. Trend lines show the selected source categories across the available record.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">07</div><div class="guide-step-copy"><h2>Interpret the statistics</h2><p>Compare source contributions, continental distribution, leading countries and insights. Shares describe reported observations and may not represent a complete global inventory.</p></div></article>
+    <article class="guide-step panel info-card"><div class="guide-step-number" aria-hidden="true">08</div><div class="guide-step-copy"><h2>Export and cite</h2><p>Export the active country and source records. Record the inventory, pollutant, year, source selection and units, then consult <a href="./references.html">Data Sources &amp; References</a>.</p></div></article>
+  </section>
+
+  <div class="info-section-heading compact">
+    <div><p class="info-kicker">INTERPRETATION CHECKS</p><h2>Before using the results</h2></div>
+  </div>
+  <section class="guide-tips info-support-grid">
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">A</div><div><h2>Missing is different from zero</h2><p>No observation does not mean zero emissions. POPs Atlas does not fill missing country-year values. A reported zero uses a separate map shade.</p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">B</div><div><h2>Comparability requires context</h2><p>Do not combine inventories without harmonizing coverage, pollutant definitions and sector categories. EDGAR PCDD/F toxic-equivalency values are excluded from this mass-based display.</p></div></article>
+  </section>
+
+  <footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory and pollutant together when using these data</span></footer>
+</main>
+</div>
+</body>
+</html>

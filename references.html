@@ -1,16 +1,98 @@
-<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#081727"/><link rel="stylesheet" href="./styles.css"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/><script defer src="./pages.js"></script><title>Data Sources &amp; References | POPs Atlas</title><script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script><script defer src="/_vercel/insights/script.js"></script></head><body><div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-symbol">◎</div><div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div></div><div class="top-actions"><nav class="site-nav" aria-label="Main navigation"><a href="./index.html" >Home</a><a href="./how-to-use.html" >How to Use</a><a href="./about.html">About</a><a href="./references.html" aria-current="page">Sources</a></nav><button id="themeToggle" class="top-icon" aria-label="Toggle dark/light mode"><span class="theme-caption">Dark</span></button></div></header><main class="dashboard info-page"><div class="intro"><div><p class="eyebrow">ATTRIBUTION &amp; DATA PROVENANCE</p><h1>Data Sources <span>&amp; References</span></h1><p>Inventory-level citations and pollutant-specific source files for the currently published dashboard.</p></div></div>
-<div class="reference-overview"><div class="reference-stat"><strong>6</strong><span>Published pollutants</span></div><div class="reference-stat"><strong>1970–2024</strong><span>Annual emissions</span></div><div class="reference-stat"><strong>EDGAR v8.1</strong><span>Verified published inventory</span></div></div><article class="panel reference-main"><div class="reference-kicker">PRIMARY DATA SOURCE</div><h2>EDGAR v8.1 — Unintentional POPs</h2><p><b>Producer:</b> European Commission Joint Research Centre (JRC). <b>Dataset:</b> EDGAR v8.1 Global Unintentional Persistent Organic Pollutants Emissions. <b>Period:</b> 1970–2024. <b>Units in the dashboard:</b> tonnes/year, converted from the annual workbook units during preprocessing.</p><p><b>Attribution:</b> Muntean et al. (2026, in preparation), European Commission Joint Research Centre, with the EDGAR dataset and its DOI.</p><p><a href="https://edgar.jrc.ec.europa.eu/dataset_pop81" target="_blank" rel="noopener">Official EDGAR inventory page ↗</a> · <a href="https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438" target="_blank" rel="noopener">Dataset DOI ↗</a></p></article>
-<section class="panel"><div class="reference-kicker">POLLUTANT-LEVEL PROVENANCE</div><h2>Pollutant-specific EDGAR files</h2><p>The following annual workbooks were processed separately, with SHA-256 details in the <a href="./data/edgar/manifest.json">dataset manifest</a>.</p><div class="reference-table"><table><thead><tr><th>Pollutant shown</th><th>EDGAR source inventory</th><th>Important note</th></tr></thead><tbody>
-<tr><td>PCB (aggregate, unintentional)</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PCB_1970_2024.zip">EDGAR PCB 1970–2024</a></td><td>Aggregated PCBs, not PCB-28</td></tr>
-<tr><td>HCB — Hexachlorobenzene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_HCB_1970_2024.zip">EDGAR HCB 1970–2024</a></td><td>Inventory-specific HCB emissions</td></tr>
-<tr><td>PAH_BaP — Benzo[a]pyrene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BaP_1970_2024.zip">EDGAR PAH BaP</a></td><td>Individual PAH compound</td></tr>
-<tr><td>PAH_BbF — Benzo[b]fluoranthene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BbF_1970_2024.zip">EDGAR PAH BbF</a></td><td>Individual PAH compound</td></tr>
-<tr><td>PAH_BkF — Benzo[k]fluoranthene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BkF_1970_2024.zip">EDGAR PAH BkF</a></td><td>Individual PAH compound</td></tr>
-<tr><td>PAH_IcdP — Indeno[1,2,3-cd]pyrene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_IcdP_1970_2024.zip">EDGAR PAH IcdP</a></td><td>Individual PAH compound</td></tr>
-</tbody></table></div><p><b>Excluded:</b> EDGAR PCDD/F is not currently published in this mass-based dashboard because its toxic-equivalency units are not interchangeable with tonnes of chemical.</p></section>
-<article class="panel reference-main"><div class="reference-kicker">SEPARATE INVENTORY · DEFAULT SCENARIO</div><h2>Breivik et al. (2016) — PCB congeners</h2><p><b>Publication:</b> Breivik, K., Armitage, J. M., Wania, F., Sweetman, A. J., and Jones, K. C. (2016), <i>Tracking the Global Distribution of Persistent Organic Pollutants Accounting for E-Waste Exports to Developing Regions</i>, Environmental Science &amp; Technology. <b>Coverage:</b> 1930–2100, including scenario projections. <b>Pollutants:</b> 22 individual PCB congeners and their Sum22. <b>Scenario:</b> Default. <b>Units:</b> tonnes/year.</p><p>The source provides annual 1° gridded emissions without economic-sector categories. POPs Atlas derives approximate country totals using the same country boundaries as its map. Offshore and unassigned emissions are preserved in the global total but are not attributed to a country. Border and coastal cells are assigned to one country by cell center or greatest land intersection; these assignments are approximate. Breivik Sum22 must not be interpreted as EDGAR's aggregate PCB inventory.</p><p><a href="https://projects.nilu.no/globalpcb/" target="_blank" rel="noopener">Original NILU inventory ↗</a> · <a href="https://doi.org/10.1021/acs.est.5b04226" target="_blank" rel="noopener">Research publication DOI ↗</a></p></article>
-<section class="reference-support reference-support--three">
-<article class="panel"><h2>Map geography</h2><p>World country geometry is derived from the D3 graph gallery Natural Earth–based basemap, with a separate user-supplied India outline integrated into one GeoJSON. The India outline's Survey of India origin and redistribution permission have not been independently verified.</p><p><a href="https://github.com/holtzy/D3-graph-gallery" target="_blank" rel="noopener">World basemap source ↗</a></p></article>
-<article class="panel"><h2>Regional assignments</h2><p>ISO3-to-region classification follows a UN M49-based country grouping. The Americas are grouped as North and South America for visualization. Some transcontinental countries follow one country-level regional assignment.</p><p><a href="https://unstats.un.org/unsd/methodology/m49/" target="_blank" rel="noopener">UN M49 methodology ↗</a></p></article>
-<article class="panel"><h2>Data handling</h2><p>Annual source values are aggregated into country/source totals in the selected year without interpolation. Empty years and missing countries are not assumed to be zero. Independent inventories are not combined. Source codes are validated during EDGAR preprocessing and unknown codes cause the process to stop.</p></article>
-</section><footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory and pollutant together when using these data</span></footer></main></div></body></html>
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Data sources, inventory citations and pollutant-level provenance for POPs Atlas."/>
+<meta name="theme-color" content="#081727"/>
+<title>Data Sources &amp; References | POPs Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./styles.css?v=info-pages-20261019-1"/>
+<script defer src="./pages.js?v=info-pages-20261019-1"></script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M25.4 5.3C12.8 4 5.6 9.8 5.8 19c.2 7.3 9 9.9 13.3 5.8 4-3.9 3.4-9.5 6.3-19.5Z" fill="currentColor" opacity=".92"/><path d="M5.2 27.4c5.3-8.5 10.1-12.8 17.1-16.2" stroke="#08251a" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+    <div><div class="brand-title">POPs <span>Atlas</span></div><div class="brand-subtitle">GLOBAL EMISSIONS INTELLIGENCE</div></div>
+  </div>
+  <div class="top-actions">
+    <span class="meta-pill"><span class="online-indicator"></span> Research dashboard</span>
+    <nav class="site-nav" aria-label="Main navigation"><a href="./index.html">Home</a><a href="./how-to-use.html">How to Use</a><a href="./about.html">About</a><a href="./references.html" aria-current="page">Sources</a></nav>
+    <button id="themeToggle" class="top-icon" type="button" aria-label="Switch color theme" title="Toggle light/dark theme"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.5a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20.5 14.5Z"/></svg><span class="theme-caption">Dark</span></button>
+  </div>
+</header>
+
+<main class="dashboard info-page">
+  <section class="intro">
+    <div><p class="eyebrow">ATTRIBUTION &amp; DATA PROVENANCE</p><h1>Data Sources <span>&amp; References</span></h1><p>Inventory-level citations and pollutant-specific source files for the datasets published in POPs Atlas.</p></div>
+  </section>
+
+  <section class="reference-overview" aria-label="Published data overview">
+    <div class="reference-stat"><span class="reference-stat-label">POLLUTANTS</span><strong>6</strong><span>Published substances</span></div>
+    <div class="reference-stat"><span class="reference-stat-label">TIME COVERAGE</span><strong>1970–2024</strong><span>Annual EDGAR emissions</span></div>
+    <div class="reference-stat"><span class="reference-stat-label">PRIMARY INVENTORY</span><strong>EDGAR v8.1</strong><span>Verified published source</span></div>
+  </section>
+
+  <article class="panel source-card source-card--featured">
+    <div class="source-card-heading"><div><p class="info-kicker">PRIMARY DATA SOURCE</p><h2>EDGAR v8.1 — Unintentional POPs</h2></div><span class="source-badge">1970–2024</span></div>
+    <div class="source-meta-grid" aria-label="EDGAR inventory details">
+      <div class="source-meta-item"><span>Producer</span><strong>EC Joint Research Centre</strong></div>
+      <div class="source-meta-item"><span>Resolution</span><strong>Annual</strong></div>
+      <div class="source-meta-item"><span>Dashboard units</span><strong>Tonnes/year</strong></div>
+      <div class="source-meta-item"><span>Inventory</span><strong>EDGAR v8.1 toxPOPs</strong></div>
+    </div>
+    <p>The dashboard uses the EDGAR v8.1 Global Unintentional Persistent Organic Pollutants Emissions dataset. Annual workbook values are converted to tonnes per year during preprocessing.</p>
+    <p><b>Attribution:</b> Muntean et al. (2026, in preparation), European Commission Joint Research Centre, with the EDGAR dataset and its DOI.</p>
+    <div class="source-links"><a class="info-button" href="https://edgar.jrc.ec.europa.eu/dataset_pop81" target="_blank" rel="noopener">Official EDGAR page <span aria-hidden="true">↗</span></a><a class="info-button secondary" href="https://doi.org/10.2905/950c9f4b-19af-4071-a9e2-f1be34f3c438" target="_blank" rel="noopener">Dataset DOI <span aria-hidden="true">↗</span></a></div>
+  </article>
+
+  <section class="panel source-card">
+    <div class="source-card-heading"><div><p class="info-kicker">POLLUTANT-LEVEL PROVENANCE</p><h2>Pollutant-specific EDGAR files</h2></div><span class="source-badge">6 workbooks</span></div>
+    <p>Each annual workbook is processed separately. File identity and SHA-256 details are recorded in the <a href="./data/edgar/manifest.json">dataset manifest</a>.</p>
+    <div class="reference-table" role="region" aria-label="Pollutant-specific EDGAR sources" tabindex="0">
+      <table>
+        <thead><tr><th>Pollutant shown</th><th>EDGAR source inventory</th><th>Important note</th></tr></thead>
+        <tbody>
+          <tr><td>PCB (aggregate, unintentional)</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PCB_1970_2024.zip">EDGAR PCB 1970–2024</a></td><td>Aggregated PCBs, not PCB-28</td></tr>
+          <tr><td>HCB — Hexachlorobenzene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_HCB_1970_2024.zip">EDGAR HCB 1970–2024</a></td><td>Inventory-specific HCB emissions</td></tr>
+          <tr><td>PAH_BaP — Benzo[a]pyrene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BaP_1970_2024.zip">EDGAR PAH BaP</a></td><td>Individual PAH compound</td></tr>
+          <tr><td>PAH_BbF — Benzo[b]fluoranthene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BbF_1970_2024.zip">EDGAR PAH BbF</a></td><td>Individual PAH compound</td></tr>
+          <tr><td>PAH_BkF — Benzo[k]fluoranthene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_BkF_1970_2024.zip">EDGAR PAH BkF</a></td><td>Individual PAH compound</td></tr>
+          <tr><td>PAH_IcdP — Indeno[1,2,3-cd]pyrene</td><td><a href="https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_toxPOPs/EDGAR_PAH_IcdP_1970_2024.zip">EDGAR PAH IcdP</a></td><td>Individual PAH compound</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="source-note"><b>Excluded:</b> EDGAR PCDD/F is not published in this mass-based dashboard because its toxic-equivalency units are not interchangeable with tonnes of chemical.</p>
+  </section>
+
+  <article class="panel source-card">
+    <div class="source-card-heading"><div><p class="info-kicker">SEPARATE INVENTORY · DEFAULT SCENARIO</p><h2>Breivik et al. (2016) — PCB congeners</h2></div><span class="source-badge source-badge--accent">1930–2100</span></div>
+    <div class="source-meta-grid" aria-label="Breivik inventory details">
+      <div class="source-meta-item"><span>Publication</span><strong>Breivik et al. (2016)</strong></div>
+      <div class="source-meta-item"><span>Coverage</span><strong>1930–2100</strong></div>
+      <div class="source-meta-item"><span>Pollutants</span><strong>22 congeners + Sum22</strong></div>
+      <div class="source-meta-item"><span>Scenario / units</span><strong>Default · tonnes/year</strong></div>
+    </div>
+    <p><i>Tracking the Global Distribution of Persistent Organic Pollutants Accounting for E-Waste Exports to Developing Regions</i>, Environmental Science &amp; Technology.</p>
+    <p>The source provides annual 1° gridded emissions without economic-sector categories. POPs Atlas derives approximate country totals using the map boundaries. Offshore and unassigned emissions remain in the global total, while border and coastal cells are assigned by cell center or greatest land intersection. Breivik Sum22 must not be interpreted as EDGAR's aggregate PCB inventory.</p>
+    <div class="source-links"><a class="info-button" href="https://projects.nilu.no/globalpcb/" target="_blank" rel="noopener">Original NILU inventory <span aria-hidden="true">↗</span></a><a class="info-button secondary" href="https://doi.org/10.1021/acs.est.5b04226" target="_blank" rel="noopener">Publication DOI <span aria-hidden="true">↗</span></a></div>
+  </article>
+
+  <div class="info-section-heading compact"><div><p class="info-kicker">SUPPORTING METHODS</p><h2>Geography and data handling</h2></div></div>
+  <section class="reference-support reference-support--three info-support-grid">
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">A</div><div><h2>Map geography</h2><p>World geometry comes from a Natural Earth-based D3 Graph Gallery basemap, with a separate user-supplied India outline. The India outline's Survey of India origin and redistribution permission have not been independently verified.</p><p><a href="https://github.com/holtzy/D3-graph-gallery" target="_blank" rel="noopener">World basemap source ↗</a></p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">B</div><div><h2>Regional assignments</h2><p>ISO3-to-region classification follows a UN M49-based grouping. The Americas are shown as North and South America. Some transcontinental countries use one country-level assignment.</p><p><a href="https://unstats.un.org/unsd/methodology/m49/" target="_blank" rel="noopener">UN M49 methodology ↗</a></p></div></article>
+    <article class="panel info-support-card"><div class="support-index" aria-hidden="true">C</div><div><h2>Data handling</h2><p>Annual values are aggregated into country and source totals without interpolation. Missing observations are not assumed to be zero. Independent inventories are not combined, and unknown EDGAR source codes stop preprocessing.</p></div></article>
+  </section>
+
+  <footer><span>POPs Atlas · Research-oriented emissions visualization</span><span>Report inventory and pollutant together when using these data</span></footer>
+</main>
+</div>
+</body>
+</html>
