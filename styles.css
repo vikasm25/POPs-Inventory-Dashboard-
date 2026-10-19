@@ -593,3 +593,9 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
   .overview-layout>.stats-strip .panel-heading{margin:0}
   .overview-layout>.stats-strip .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px}
 }
+
+/* Keep the primary overview cards aligned on larger screens. */
+@media(min-width:851px){
+  .top-grid{align-items:stretch!important}
+  .top-grid>.map-panel,.top-grid>.controls-panel{height:100%!important;align-self:stretch!important}
+}
