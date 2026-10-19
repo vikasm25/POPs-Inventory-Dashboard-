@@ -1,6 +1,10 @@
 name: Sync EDGAR POPs inventories
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/sync_edgar.py'
+      - 'scripts/test_sync_edgar.py'
   schedule:
     - cron: '13 5 * * 1'
 permissions:
