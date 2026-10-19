@@ -510,3 +510,74 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
  .info-page .about-hero-heading h2{max-width:none;margin-top:9px}
  .info-page .about-hero-body p{font-size:14px;line-height:1.7}
 }
+
+
+/* UI audit: clearer hierarchy, balanced cards, and touch-first responsive behavior. */
+.panel{overflow:hidden}
+.panel-heading{min-height:42px}
+.panel-heading h2{line-height:1.2}
+.panel-heading p{line-height:1.45}
+.map-panel{display:flex;flex-direction:column}
+.map-panel .map-stage{flex:1}
+.controls-panel{display:flex;flex-direction:column}
+.controls-panel .selection-cards{flex:1}
+.stats-strip .kpi{background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.stats-strip .kpi small{color:var(--muted);font-weight:700}
+.bottom-grid{align-items:start}
+.analytics-column>.panel{overflow:hidden}
+.trend-panel,.top-polluters-panel{min-height:390px}
+.insights-panel{background:linear-gradient(135deg,var(--panel),var(--panel2))}
+.map-toolbar{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.year-control{border-top:1px solid var(--line);padding-top:14px}
+.filter-strip.inventory-filters{align-items:end}
+.filter-strip.inventory-filters .filter-action{align-self:end}
+@media (min-width:701px) and (max-width:1100px){
+  .dashboard{padding:26px 24px}
+  .top-grid{grid-template-columns:minmax(0,1fr)!important}
+  .controls-panel{display:grid;grid-template-columns:minmax(220px,.75fr) minmax(0,1.25fr);gap:18px;align-items:start}
+  .controls-panel>.panel-heading{grid-column:1/-1;margin-bottom:0}
+  .controls-panel>.selection-footnote{grid-column:1/-1}
+  .controls-panel .selected-location{height:100%}
+  .controls-panel .selection-cards{min-width:0}
+  .bottom-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .analytics-secondary .donut-layout{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:700px){
+  .dashboard{padding:20px 14px}
+  .topbar{height:auto;min-height:68px;padding:12px 14px;align-items:flex-start;gap:12px}
+  .brand{gap:9px}
+  .brand-symbol{width:34px}
+  .brand-title{font-size:20px}
+  .brand-subtitle{font-size:8px;letter-spacing:1.5px}
+  .top-actions{gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .meta-pill{display:none}
+  .site-nav{order:3;width:100%;justify-content:flex-end}
+  .site-nav a{padding:5px 7px}
+  .intro{margin-bottom:18px}
+  .intro h1{font-size:30px}
+  .intro p:not(.eyebrow){font-size:13px;line-height:1.55}
+  .filter-strip.inventory-filters{gap:10px;margin-bottom:14px}
+  .panel{padding:15px;border-radius:11px}
+  .panel-heading{margin-bottom:12px;min-height:0}
+  .panel-heading h2{font-size:17px}
+  .panel-heading p{font-size:11px}
+  .map-panel .map-toolbar{display:flex;flex-wrap:wrap;gap:9px}
+  .map-panel .map-tabs{flex:0 0 auto}
+  .map-panel .map-message{margin-left:auto;font-size:10px;text-align:right}
+  .year-control{margin-top:2px}
+  .stats-strip .kpi{min-height:104px}
+  .trend-panel,.top-polluters-panel{min-height:0}
+  .analytics-column{gap:14px}
+  .analytics-column .panel{min-height:0}
+  .insights-grid{gap:8px!important}
+  .insight{padding:11px!important}
+  .insight strong{font-size:19px}
+  .top-country-row{padding:9px 5px}
+}
+@media (max-width:380px){
+  .dashboard{padding-inline:10px}
+  .panel{padding:13px}
+  .stats-strip .kpi{min-height:108px}
+  .stats-strip .kpi small,.stats-strip .kpi span{font-size:11px}
+  .map-panel .map-message{width:100%;margin-left:0;text-align:left}
+}
