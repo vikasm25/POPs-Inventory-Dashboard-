@@ -177,12 +177,18 @@ button,.tab,.choice-row{touch-action:manipulation}
 .about-card{min-height:255px}
 .about-card .info-kicker{margin-bottom:10px}
 .about-feature{margin-top:24px}
-.reference-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
-.reference-stat{position:relative;display:flex;min-width:0;flex-direction:column;gap:5px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}
-.reference-stat::after{position:absolute;right:-20px;bottom:-30px;width:95px;height:95px;background:radial-gradient(circle,var(--control),transparent 70%);content:""}
-.reference-stat-label{color:var(--blue)!important;font-size:10px!important;font-weight:750;letter-spacing:1.2px}
-.reference-stat strong{position:relative;z-index:1;color:var(--text);font:700 clamp(21px,2.2vw,29px) "Space Grotesk",sans-serif;white-space:nowrap}
-.reference-stat>span:last-child{position:relative;z-index:1;color:var(--muted);font-size:12px}
+.inventory-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.inventory-profile{position:relative;min-width:0;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.inventory-profile::after{position:absolute;right:-24px;bottom:-36px;width:120px;height:120px;background:radial-gradient(circle,var(--control),transparent 70%);content:""}
+.inventory-profile--edgar{background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%)}
+.inventory-profile--breivik{background:linear-gradient(135deg,var(--panel2) 0%,var(--panel) 100%)}
+.inventory-profile-heading{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
+.inventory-profile-heading h2{margin:6px 0 0;font-size:21px}
+.inventory-profile-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.inventory-profile-stat{display:flex;min-width:0;flex-direction:column;gap:4px;padding:10px;background:var(--control);border:1px solid var(--line);border-radius:9px}
+.inventory-profile-stat strong{color:var(--text);font:700 15px "Space Grotesk",sans-serif;line-height:1.25;overflow-wrap:anywhere}
+.inventory-profile-stat span{color:var(--muted);font-size:10px;line-height:1.35}
+.inventory-profile>p{position:relative;z-index:1;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
 .source-card{margin-bottom:16px}
 .source-card--featured{background:linear-gradient(135deg,var(--panel) 0%,var(--panel2) 100%)}
 .source-card-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
@@ -346,11 +352,12 @@ button,.tab,.choice-row{touch-action:manipulation}
  .guide-step h2,.about-card h2{font-size:17px}
  .guide-step p,.about-card p,.info-support-card p,.source-card>p{font-size:13px;line-height:1.62}
  .about-card{min-height:0}
- .reference-overview{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
- .reference-stat{padding:13px 10px}
- .reference-stat strong{font-size:16px;white-space:normal}
- .reference-stat>span:last-child{font-size:10px}
- .reference-stat-label{font-size:9px!important;letter-spacing:.7px}
+ .inventory-overview{grid-template-columns:minmax(0,1fr);gap:12px}
+ .inventory-profile{padding:16px 14px}
+ .inventory-profile-heading h2{font-size:19px}
+ .inventory-profile-grid{gap:7px}
+ .inventory-profile-stat{padding:9px 8px}
+ .inventory-profile-stat strong{font-size:13px}
  .source-card-heading{display:block;margin-bottom:14px}
  .source-badge{margin-top:10px}
  .source-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -366,7 +373,6 @@ button,.tab,.choice-row{touch-action:manipulation}
  .stats-strip .kpi-grid{grid-template-columns:minmax(0,1fr)}
  .stats-strip .kpi{min-height:96px}
  .insights-grid{grid-template-columns:minmax(0,1fr)}
- .reference-overview{grid-template-columns:minmax(0,1fr)}
  .source-meta-grid{grid-template-columns:minmax(0,1fr)}
  .info-actions,.source-links{align-items:stretch;flex-direction:column}
  .info-button{width:100%}

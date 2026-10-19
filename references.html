@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="./styles.css?v=info-pages-20261019-1"/>
+<link rel="stylesheet" href="./styles.css?v=info-pages-20261019-2"/>
 <script defer src="./pages.js?v=info-pages-20261019-1"></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -33,10 +33,25 @@
     <div><p class="eyebrow">ATTRIBUTION &amp; DATA PROVENANCE</p><h1>Data Sources <span>&amp; References</span></h1><p>Inventory-level citations and pollutant-specific source files for the datasets published in POPs Atlas.</p></div>
   </section>
 
-  <section class="reference-overview" aria-label="Published data overview">
-    <div class="reference-stat"><span class="reference-stat-label">POLLUTANTS</span><strong>6</strong><span>Published substances</span></div>
-    <div class="reference-stat"><span class="reference-stat-label">TIME COVERAGE</span><strong>1970–2024</strong><span>Annual EDGAR emissions</span></div>
-    <div class="reference-stat"><span class="reference-stat-label">PRIMARY INVENTORY</span><strong>EDGAR v8.1</strong><span>Verified published source</span></div>
+  <section class="inventory-overview" aria-label="Published inventory profiles">
+    <article class="inventory-profile inventory-profile--edgar">
+      <div class="inventory-profile-heading"><div><p class="info-kicker">INVENTORY 01 · EDGAR v8.1</p><h2>Unintentional POPs</h2></div><span class="source-badge">Primary</span></div>
+      <div class="inventory-profile-grid">
+        <div class="inventory-profile-stat"><strong>6</strong><span>Published pollutants</span></div>
+        <div class="inventory-profile-stat"><strong>1970–2024</strong><span>Annual coverage</span></div>
+        <div class="inventory-profile-stat"><strong>Tonnes/year</strong><span>Dashboard units</span></div>
+      </div>
+      <p>European Commission Joint Research Centre inventory for aggregate PCB, HCB and selected PAH compounds.</p>
+    </article>
+    <article class="inventory-profile inventory-profile--breivik">
+      <div class="inventory-profile-heading"><div><p class="info-kicker">INVENTORY 02 · BREIVIK ET AL. (2016)</p><h2>PCB congeners</h2></div><span class="source-badge source-badge--accent">Separate</span></div>
+      <div class="inventory-profile-grid">
+        <div class="inventory-profile-stat"><strong>22 + Sum22</strong><span>PCB series</span></div>
+        <div class="inventory-profile-stat"><strong>1930–2100</strong><span>Historical + scenario years</span></div>
+        <div class="inventory-profile-stat"><strong>Default</strong><span>Published scenario</span></div>
+      </div>
+      <p>NILU-linked gridded PCB inventory without economic-sector categories; country totals are approximate map-based assignments.</p>
+    </article>
   </section>
 
   <article class="panel source-card source-card--featured">
