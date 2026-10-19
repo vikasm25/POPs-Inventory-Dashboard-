@@ -5,17 +5,18 @@ from sync_edgar import sector_for_code
 class SectorMappingTests(unittest.TestCase):
     def test_actual_2024_workbook_codes(self):
         samples = {
-            "1.A.1.a": "Power Industry",
-            "1.A.2": "Industrial Combustion",
-            "1.A.3.b_noRES": "Transport",
-            "1.A.4": "Buildings",
-            "1.A.5": "Buildings",
-            "1.A.1.bc": "Fuel Exploitation",
-            "2.C": "Processes",
-            "4.C": "Waste",
-            "1.A.3.d": "Transport",
-            "1.A.3.c": "Transport",
-            "3.C.1": "Agriculture",
+            "1.A.1.a": "Power industry",
+            "1.A.2": "Combustion for manufacturing",
+            "1.A.3.b_noRES": "Road transportation",
+            "1.A.4": "Energy for buildings",
+            "1.A.5": "Energy for buildings",
+            "1.A.1.bc": "Oil refineries & Transformation industry",
+            "2.C.1+2.C.2": "Iron and steel production",
+            "2.C.3+2.C.4+2.C.5+2.C.6+2.C.7": "Non-ferrous metals production",
+            "4.C": "Solid waste incineration",
+            "1.A.3.d": "Shipping",
+            "1.A.3.c": "Railways, pipelines, off-road transport",
+            "3.C.1": "Agricultural waste burning",
         }
         for code, expected in samples.items():
             with self.subTest(code=code):
