@@ -564,3 +564,20 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
   .map-frame .map-legend .legend-number{font-size:9px!important}
   .map-frame .map-legend .legend-empty{font-size:9px!important}
 }
+
+/* Mobile map controls: full-width map, horizontal scale, and fluid timeline. */
+@media(max-width:700px){
+  .map-frame{display:flex!important;flex-direction:column!important;gap:8px!important}
+  .map-frame .map-viewport{order:1;width:100%;aspect-ratio:1000/465!important;flex:0 0 auto}
+  .map-frame .map-viewport svg{height:auto!important;width:100%!important}
+  .map-frame .map-legend{order:2;position:static!important;width:100%!important;display:block!important;padding:8px 10px!important;opacity:1}
+  .map-frame .map-legend .legend-title{font-size:10px!important;display:flex;justify-content:space-between;align-items:center}
+  .map-frame .map-legend .legend-title span{display:inline;font-size:10px;margin:0}
+  .map-frame .map-legend .legend-ramp{display:flex;flex-direction:column;gap:4px;min-height:0;height:auto}
+  .map-frame .map-legend .legend-scale{display:flex;flex-direction:row;width:100%!important;height:13px!important;min-height:13px!important;flex:0 0 13px!important}
+  .map-frame .map-legend .legend-ticks{display:flex;flex-direction:row;justify-content:space-between;gap:8px}
+  .map-frame .map-legend .legend-number{font-size:9px!important}
+  .map-frame .map-legend>.legend-empty{display:inline-flex;width:auto;margin:5px 12px 0 0;font-size:9px!important}
+  .year-control,.year-bar,.year-bar input{width:100%;min-width:0}
+  .year-bar{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center}
+}
