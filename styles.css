@@ -581,3 +581,10 @@ html[data-theme="light"]{--ocean-fill:#dcecf5;--ocean-label:#587b92}
   .year-control,.year-bar,.year-bar input{width:100%;min-width:0}
   .year-bar{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center}
 }
+
+/* Laptop/monitor balance: keep the overview row intact above tablet widths. */
+@media(min-width:1201px){
+  .overview-layout{display:block}
+  .overview-layout>.top-grid{display:grid}
+  .overview-layout>.stats-strip{display:block;margin-bottom:18px}
+}
