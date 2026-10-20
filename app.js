@@ -138,7 +138,7 @@ function region(){
  const x=d3.scaleBand().domain(entries.map(d=>d.name)).range([m.l,w-m.r]).padding(.32);
  const y=d3.scaleLinear().domain([0,d3.max(entries,d=>d.value)||1]).nice().range([h-m.b,m.t]);
  const svg=root.append("svg").attr("viewBox","0 0 "+w+" "+h).attr("preserveAspectRatio","xMidYMid meet");
- svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.l+",0)").call(d3.axisLeft(y).ticks(compact?4:6).tickFormat(d3.format("~s")));
+ svg.append("g").attr("class","chart-axis").attr("transform","translate("+m.l+",0)").call(d3.axisLeft(y).ticks(compact?4:6).tickFormat(d3.format(".3~g")));
  const xAxis=d3.axisBottom(x).tickSize(0).tickPadding(compact?11:18);if(compact)xAxis.tickFormat(d=>d.replace("North ","N. ").replace("South ","S. "));
  svg.append("g").attr("class","chart-axis").attr("transform","translate(0,"+(h-m.b)+")").call(xAxis).selectAll("text").style("font-size",compact?"10px":"13px");
  svg.append("text").attr("class","axis-title").attr("transform","translate("+(compact?15:23)+","+((m.t+h-m.b)/2)+") rotate(-90)").attr("text-anchor","middle").text("Emissions (tonnes/year)");
